@@ -17,6 +17,8 @@ dependencies {
     implementation(projects.core.database)
     implementation(libs.paging.runtime)
     implementation(libs.kotlinx.coroutines.android)
+    implementation(libs.room.ktx)
+    implementation(libs.retrofit.core)
     testImplementation(libs.junit)
     testImplementation(libs.kotlinx.coroutines.test)
     testImplementation(libs.turbine)
