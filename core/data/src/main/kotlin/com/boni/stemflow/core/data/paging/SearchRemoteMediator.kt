@@ -77,7 +77,6 @@ class SearchRemoteMediator(
     } catch (e: IOException) {
         MediatorResult.Error(e)
     } catch (e: HttpException) {
-        if (e.code() == 429) MediatorResult.Success(endOfPaginationReached = true)
-        else MediatorResult.Error(e)
+        MediatorResult.Error(e)
     }
 }
