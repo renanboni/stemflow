@@ -33,7 +33,7 @@ internal fun SearchField(
         TextField(
             value = query,
             onValueChange = onQueryChange,
-            placeholder = { Text("Search songs") },
+            placeholder = { Text("Search") },
             leadingIcon = {
                 Icon(
                     imageVector = Icons.Default.Search,

@@ -27,8 +27,8 @@ import com.boni.stemflow.core.ui.component.SongRow
 import com.boni.stemflow.core.ui.component.TrackOptionsSheet
 import com.boni.stemflow.feature.library.components.AppendError
 import com.boni.stemflow.feature.library.components.AppendSpinner
+import com.boni.stemflow.feature.library.components.LibraryHeader
 import com.boni.stemflow.feature.library.components.OfflineBanner
-import com.boni.stemflow.feature.library.components.SearchField
 import com.boni.stemflow.feature.library.components.SectionHeading
 import kotlinx.coroutines.flow.flowOf
 
@@ -67,7 +67,7 @@ internal fun LibraryScreen(
 
     Scaffold(
         topBar = {
-            SearchField(
+            LibraryHeader(
                 query = uiState.query,
                 onQueryChange = onQueryChange,
             )
