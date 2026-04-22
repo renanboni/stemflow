@@ -31,6 +31,11 @@ class SearchRemoteMediator(
             LoadType.REFRESH -> 0
             LoadType.PREPEND -> return MediatorResult.Success(endOfPaginationReached = true)
             LoadType.APPEND -> {
+                val presenterCount = state.pages.sumOf { it.data.size }
+                val dbCount = db.searchResultDao().countFor(query)
+                if (dbCount > presenterCount) {
+                    return MediatorResult.Success(endOfPaginationReached = false)
+                }
                 val keys = db.remoteKeysDao().keysForQuery(query)
                     ?: return MediatorResult.Success(endOfPaginationReached = true)
                 keys.nextKey ?: return MediatorResult.Success(endOfPaginationReached = true)
