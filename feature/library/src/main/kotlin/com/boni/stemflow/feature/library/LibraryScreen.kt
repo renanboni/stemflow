@@ -1,45 +1,36 @@
 package com.boni.stemflow.feature.library
 
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.LoadState
+import androidx.paging.PagingData
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemKey
+import com.boni.stemflow.core.designsystem.theme.StemflowTheme
 import com.boni.stemflow.core.domain.model.Track
 import com.boni.stemflow.core.ui.component.SongRow
 import com.boni.stemflow.core.ui.component.TrackOptionsSheet
+import com.boni.stemflow.feature.library.components.AppendError
+import com.boni.stemflow.feature.library.components.AppendSpinner
+import com.boni.stemflow.feature.library.components.OfflineBanner
+import com.boni.stemflow.feature.library.components.SearchField
+import com.boni.stemflow.feature.library.components.SectionHeading
+import kotlinx.coroutines.flow.flowOf
 
 @Composable
 fun LibraryScreen(
@@ -144,86 +135,72 @@ internal fun LibraryScreen(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+private fun previewTrack(id: Long, title: String, artist: String) = Track(
+    trackId = id,
+    name = title,
+    artistName = artist,
+    artistId = 1L,
+    collectionId = 10L,
+    collectionName = "Album",
+    artworkUrl100 = null,
+    artworkUrl600 = null,
+    previewUrl = null,
+    trackTimeMillis = null,
+    primaryGenreName = null,
+    releaseDate = null,
+    trackViewUrl = null,
+)
+
+@Preview
 @Composable
-private fun SearchField(
-    query: String,
-    onQueryChange: (String) -> Unit,
-) {
-    val fill = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.10f)
-    Surface(color = MaterialTheme.colorScheme.surface) {
-        TextField(
-            value = query,
-            onValueChange = onQueryChange,
-            placeholder = { Text("Search songs") },
-            leadingIcon = {
-                Icon(
-                    imageVector = Icons.Default.Search,
-                    contentDescription = null,
-                )
-            },
-            singleLine = true,
-            shape = RoundedCornerShape(12.dp),
-            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
-            colors = TextFieldDefaults.colors(
-                focusedContainerColor = fill,
-                unfocusedContainerColor = fill,
-                focusedIndicatorColor = Color.Transparent,
-                unfocusedIndicatorColor = Color.Transparent,
+private fun LibraryScreenRecentPreview() {
+    StemflowTheme {
+        LibraryScreen(
+            uiState = LibraryUiState(
+                query = "",
+                recentlyPlayed = listOf(
+                    previewTrack(1L, "Welcome to the Jungle", "Guns N' Roses"),
+                    previewTrack(2L, "November Rain", "Guns N' Roses"),
+                    previewTrack(3L, "Sweet Child O' Mine", "Guns N' Roses"),
+                ),
+                isOffline = false,
             ),
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 24.dp, vertical = 12.dp),
+            pagedItems = flowOf(PagingData.empty<Track>()).collectAsLazyPagingItems(),
+            onQueryChange = {},
+            onTrackClick = {},
+            onOpenAlbum = {},
         )
     }
 }
 
+@Preview
 @Composable
-private fun SectionHeading(text: String) {
-    Text(
-        text = text,
-        style = MaterialTheme.typography.titleMedium,
-        color = MaterialTheme.colorScheme.onSurface,
-        modifier = Modifier.padding(horizontal = 24.dp, vertical = 12.dp),
-    )
-}
-
-@Composable
-private fun OfflineBanner() {
-    Surface(
-        color = MaterialTheme.colorScheme.surfaceVariant,
-        modifier = Modifier.fillMaxWidth(),
-    ) {
-        Text(
-            text = "You're offline — showing cached results",
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            modifier = Modifier.padding(horizontal = 24.dp, vertical = 12.dp),
+private fun LibraryScreenOfflinePreview() {
+    StemflowTheme {
+        LibraryScreen(
+            uiState = LibraryUiState(
+                query = "",
+                recentlyPlayed = listOf(previewTrack(1L, "Paradise City", "Guns N' Roses")),
+                isOffline = true,
+            ),
+            pagedItems = flowOf(PagingData.empty<Track>()).collectAsLazyPagingItems(),
+            onQueryChange = {},
+            onTrackClick = {},
+            onOpenAlbum = {},
         )
     }
 }
 
+@Preview
 @Composable
-private fun AppendSpinner() {
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(16.dp),
-        contentAlignment = Alignment.Center,
-    ) {
-        CircularProgressIndicator()
+private fun LibraryScreenEmptyPreview() {
+    StemflowTheme {
+        LibraryScreen(
+            uiState = LibraryUiState(),
+            pagedItems = flowOf(PagingData.empty<Track>()).collectAsLazyPagingItems(),
+            onQueryChange = {},
+            onTrackClick = {},
+            onOpenAlbum = {},
+        )
     }
-}
-
-@Composable
-private fun AppendError() {
-    Text(
-        text = "Load error — pull to retry",
-        style = MaterialTheme.typography.bodyMedium,
-        color = MaterialTheme.colorScheme.onSurfaceVariant,
-        textAlign = TextAlign.Center,
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(16.dp),
-    )
 }
