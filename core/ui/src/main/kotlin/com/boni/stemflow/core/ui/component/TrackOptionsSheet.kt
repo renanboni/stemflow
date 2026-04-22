@@ -10,8 +10,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Album
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -22,9 +20,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.boni.stemflow.core.designsystem.R
 import com.boni.stemflow.core.designsystem.component.Thumbnail
 import com.boni.stemflow.core.designsystem.theme.StemflowTheme
 
@@ -69,7 +69,11 @@ fun TrackOptionsSheet(
                     )
                 }
             }
-            SheetAction(icon = Icons.Default.Album, label = "View album", onClick = onOpenAlbum)
+            SheetAction(
+                icon = painterResource(R.drawable.ic_setlist),
+                label = "View album",
+                onClick = onOpenAlbum,
+            )
         }
     }
 }
@@ -87,7 +91,7 @@ private fun StemflowDragHandle() {
 
 @Composable
 private fun SheetAction(
-    icon: ImageVector,
+    icon: Painter,
     label: String,
     onClick: () -> Unit,
 ) {
@@ -100,7 +104,7 @@ private fun SheetAction(
         horizontalArrangement = Arrangement.spacedBy(16.dp),
     ) {
         Icon(
-            imageVector = icon,
+            painter = icon,
             contentDescription = null,
             tint = MaterialTheme.colorScheme.onSurface,
         )
