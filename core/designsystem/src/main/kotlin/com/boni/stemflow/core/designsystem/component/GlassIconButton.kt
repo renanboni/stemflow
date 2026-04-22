@@ -1,16 +1,21 @@
 package com.boni.stemflow.core.designsystem.component
 
-import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedIconButton
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -26,17 +31,27 @@ fun GlassIconButton(
     size: Dp = 48.dp,
 ) {
     val onSurface = MaterialTheme.colorScheme.onSurface
-    OutlinedIconButton(
-        onClick = onClick,
-        modifier = modifier.size(size),
-        shape = CircleShape,
-        border = BorderStroke(1.dp, onSurface.copy(alpha = 0.20f)),
-        colors = IconButtonDefaults.outlinedIconButtonColors(
-            containerColor = onSurface.copy(alpha = 0.10f),
-            contentColor = onSurface,
-        ),
+    Box(
+        modifier = modifier
+            .size(size)
+            .clip(CircleShape)
+            .background(
+                brush = Brush.verticalGradient(
+                    colors = listOf(
+                        onSurface.copy(alpha = 0.30f),
+                        onSurface.copy(alpha = 0.15f),
+                    ),
+                ),
+            )
+            .border(1.dp, onSurface.copy(alpha = 0.40f), CircleShape)
+            .clickable(role = Role.Button, onClick = onClick),
+        contentAlignment = Alignment.Center,
     ) {
-        Icon(painter = icon, contentDescription = contentDescription)
+        Icon(
+            painter = icon,
+            contentDescription = contentDescription,
+            tint = onSurface,
+        )
     }
 }
 
