@@ -8,6 +8,7 @@ import com.boni.stemflow.core.domain.repository.SearchRepository
 import com.boni.stemflow.core.domain.repository.TrackRepository
 import dagger.Binds
 import dagger.Module
+import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
@@ -27,4 +28,9 @@ abstract class DataModule {
     @Binds
     @Singleton
     abstract fun bindAlbumRepository(impl: DefaultAlbumRepository): AlbumRepository
+
+    companion object {
+        @Provides
+        fun provideClock(): () -> Long = System::currentTimeMillis
+    }
 }
