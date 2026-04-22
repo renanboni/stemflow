@@ -171,6 +171,29 @@ private fun previewTrack(id: Long, title: String, artist: String) = Track(
     trackViewUrl = null,
 )
 
+private val PreviewRecentTracks = listOf(
+    previewTrack(1L, "Welcome to the Jungle", "Guns N' Roses"),
+    previewTrack(2L, "November Rain", "Guns N' Roses"),
+    previewTrack(3L, "Sweet Child O' Mine", "Guns N' Roses"),
+    previewTrack(4L, "Paradise City", "Guns N' Roses"),
+    previewTrack(5L, "Don't Cry", "Guns N' Roses"),
+    previewTrack(6L, "Patience", "Guns N' Roses"),
+    previewTrack(7L, "Bohemian Rhapsody", "Queen"),
+    previewTrack(8L, "Stairway to Heaven", "Led Zeppelin"),
+    previewTrack(9L, "Hotel California", "Eagles"),
+    previewTrack(10L, "Smells Like Teen Spirit", "Nirvana"),
+    previewTrack(11L, "Come As You Are", "Nirvana"),
+    previewTrack(12L, "Wonderwall", "Oasis"),
+    previewTrack(13L, "Creep", "Radiohead"),
+    previewTrack(14L, "Karma Police", "Radiohead"),
+    previewTrack(15L, "Black", "Pearl Jam"),
+    previewTrack(16L, "Alive", "Pearl Jam"),
+    previewTrack(17L, "Under the Bridge", "Red Hot Chili Peppers"),
+    previewTrack(18L, "Californication", "Red Hot Chili Peppers"),
+    previewTrack(19L, "Every Breath You Take", "The Police"),
+    previewTrack(20L, "Billie Jean", "Michael Jackson"),
+)
+
 @Preview
 @Composable
 private fun LibraryScreenRecentPreview() {
@@ -178,11 +201,7 @@ private fun LibraryScreenRecentPreview() {
         LibraryScreen(
             uiState = LibraryUiState(
                 query = "",
-                recentlyPlayed = listOf(
-                    previewTrack(1L, "Welcome to the Jungle", "Guns N' Roses"),
-                    previewTrack(2L, "November Rain", "Guns N' Roses"),
-                    previewTrack(3L, "Sweet Child O' Mine", "Guns N' Roses"),
-                ),
+                recentlyPlayed = PreviewRecentTracks,
                 isOffline = false,
             ),
             pagedItems = flowOf(PagingData.empty<Track>()).collectAsLazyPagingItems(),
