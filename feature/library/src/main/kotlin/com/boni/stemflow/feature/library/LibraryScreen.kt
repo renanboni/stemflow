@@ -4,13 +4,16 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -31,6 +34,7 @@ import com.boni.stemflow.feature.library.components.LibraryHeader
 import com.boni.stemflow.feature.library.components.OfflineBanner
 import com.boni.stemflow.feature.library.components.SectionHeading
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.launch
 
 @Composable
 fun LibraryScreen(
@@ -64,12 +68,17 @@ internal fun LibraryScreen(
     var selectedTrack by remember { mutableStateOf<Track?>(null) }
     val isRefreshing = pagedItems.loadState.refresh is LoadState.Loading &&
         pagedItems.itemCount > 0
+    val listState = rememberLazyListState()
+    val isCollapsed by remember { derivedStateOf { listState.canScrollBackward } }
+    val scope = rememberCoroutineScope()
 
     Scaffold(
         topBar = {
             LibraryHeader(
                 query = uiState.query,
                 onQueryChange = onQueryChange,
+                isCollapsed = isCollapsed,
+                onSearchClick = { scope.launch { listState.animateScrollToItem(0) } },
             )
         },
         modifier = modifier,
@@ -81,7 +90,7 @@ internal fun LibraryScreen(
                 .padding(inner)
                 .fillMaxSize(),
         ) {
-            LazyColumn(Modifier.fillMaxSize()) {
+            LazyColumn(state = listState, modifier = Modifier.fillMaxSize()) {
                 if (uiState.isOffline) {
                     item { OfflineBanner() }
                 }
