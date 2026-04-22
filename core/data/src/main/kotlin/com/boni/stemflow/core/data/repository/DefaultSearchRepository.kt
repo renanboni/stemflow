@@ -19,7 +19,7 @@ import javax.inject.Singleton
 
 @OptIn(ExperimentalPagingApi::class)
 @Singleton
-class OfflineFirstSearchRepository @Inject constructor(
+class DefaultSearchRepository @Inject constructor(
     private val network: NetworkDataSource,
     private val db: StemflowDatabase,
 ) : SearchRepository {

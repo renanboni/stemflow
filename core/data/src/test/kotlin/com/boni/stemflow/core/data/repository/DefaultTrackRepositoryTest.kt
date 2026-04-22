@@ -14,18 +14,18 @@ import org.junit.Assert.assertNull
 import org.junit.Before
 import org.junit.Test
 
-class LocalTrackRepositoryTest {
+class DefaultTrackRepositoryTest {
 
     private lateinit var trackDao: FakeTrackDao
     private lateinit var recentDao: FakeRecentlyPlayedDao
     private var clock: () -> Long = { 42L }
-    private lateinit var repo: LocalTrackRepository
+    private lateinit var repo: DefaultTrackRepository
 
     @Before
     fun setUp() {
         trackDao = FakeTrackDao()
         recentDao = FakeRecentlyPlayedDao(trackDao)
-        repo = LocalTrackRepository(trackDao, recentDao) { clock() }
+        repo = DefaultTrackRepository(trackDao, recentDao) { clock() }
     }
 
     @Test

@@ -11,7 +11,7 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class LocalTrackRepository @Inject constructor(
+class DefaultTrackRepository @Inject constructor(
     private val trackDao: TrackDao,
     private val recentlyPlayedDao: RecentlyPlayedDao,
     private val clock: () -> Long = System::currentTimeMillis,
