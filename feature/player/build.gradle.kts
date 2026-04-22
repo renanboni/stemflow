@@ -1,5 +1,6 @@
 plugins {
     alias(libs.plugins.stemflow.android.feature)
+    alias(libs.plugins.kotlin.serialization)
 }
 
 android {
@@ -10,4 +11,5 @@ dependencies {
     implementation(projects.core.data)
     implementation(libs.media3.exoplayer)
     implementation(libs.coil.compose)
+    implementation(libs.kotlinx.serialization.json)
 }
