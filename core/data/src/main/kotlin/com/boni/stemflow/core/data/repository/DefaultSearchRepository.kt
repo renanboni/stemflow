@@ -29,7 +29,7 @@ class DefaultSearchRepository @Inject constructor(
             config = PagingConfig(
                 pageSize = SEARCH_PAGE_SIZE,
                 initialLoadSize = SEARCH_PAGE_SIZE,
-                prefetchDistance = SEARCH_PAGE_SIZE / 2,
+                prefetchDistance = 5,
                 enablePlaceholders = false,
             ),
             remoteMediator = SearchRemoteMediator(query, network, db),
