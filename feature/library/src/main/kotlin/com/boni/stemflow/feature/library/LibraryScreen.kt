@@ -34,7 +34,6 @@ import com.boni.stemflow.feature.library.components.AppendError
 import com.boni.stemflow.feature.library.components.AppendSpinner
 import com.boni.stemflow.feature.library.components.LibraryHeader
 import com.boni.stemflow.feature.library.components.OfflineBanner
-import com.boni.stemflow.feature.library.components.SectionHeading
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
 
@@ -105,10 +104,7 @@ internal fun LibraryScreen(
                 if (uiState.isOffline) {
                     item { OfflineBanner() }
                 }
-                if (uiState.query.isBlank() && uiState.recentlyPlayed.isNotEmpty()) {
-                    item {
-                        SectionHeading("Recently played")
-                    }
+                if (uiState.query.isBlank()) {
                     items(uiState.recentlyPlayed, key = { "recent-${it.trackId}" }) { track ->
                         SongRow(
                             title = track.name,
