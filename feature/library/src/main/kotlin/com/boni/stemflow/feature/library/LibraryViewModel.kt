@@ -1,4 +1,4 @@
-package com.boni.stemflow.feature.search
+package com.boni.stemflow.feature.library
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -26,7 +26,7 @@ import kotlinx.coroutines.flow.stateIn
 
 @OptIn(ExperimentalCoroutinesApi::class, FlowPreview::class)
 @HiltViewModel
-class SearchViewModel @Inject constructor(
+class LibraryViewModel @Inject constructor(
     private val searchRepository: SearchRepository,
     trackRepository: TrackRepository,
     connectivity: ConnectivityObserver,
@@ -42,13 +42,13 @@ class SearchViewModel @Inject constructor(
         }
         .cachedIn(viewModelScope)
 
-    val uiState: StateFlow<HomeUiState> = combine(
+    val uiState: StateFlow<LibraryUiState> = combine(
         query,
         trackRepository.getRecentlyPlayed(),
         connectivity.state.map { it == ConnectivityState.Disconnected },
     ) { q, recent, offline ->
-        HomeUiState(query = q, recentlyPlayed = recent, isOffline = offline)
-    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), HomeUiState())
+        LibraryUiState(query = q, recentlyPlayed = recent, isOffline = offline)
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), LibraryUiState())
 
     fun onQueryChange(q: String) {
         query.value = q

@@ -36,7 +36,7 @@ include(":core:data")
 include(":core:designsystem")
 include(":core:ui")
 
-include(":feature:search")
+include(":feature:library")
 include(":feature:player")
 include(":feature:album")
 

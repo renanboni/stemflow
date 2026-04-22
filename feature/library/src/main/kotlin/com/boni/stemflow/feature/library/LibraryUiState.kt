@@ -1,8 +1,8 @@
-package com.boni.stemflow.feature.search
+package com.boni.stemflow.feature.library
 
 import com.boni.stemflow.core.domain.model.Track
 
-data class HomeUiState(
+data class LibraryUiState(
     val query: String = "",
     val recentlyPlayed: List<Track> = emptyList(),
     val isOffline: Boolean = false,

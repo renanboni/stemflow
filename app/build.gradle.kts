@@ -29,7 +29,7 @@ dependencies {
     implementation(projects.core.domain)
     implementation(projects.core.data)
     implementation(projects.core.designsystem)
-    implementation(projects.feature.search)
+    implementation(projects.feature.library)
     implementation(projects.feature.player)
     implementation(projects.feature.album)
 

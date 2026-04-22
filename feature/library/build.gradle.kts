@@ -3,7 +3,7 @@ plugins {
 }
 
 android {
-    namespace = "com.boni.stemflow.feature.search"
+    namespace = "com.boni.stemflow.feature.library"
 }
 
 dependencies {
