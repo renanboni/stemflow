@@ -1,4 +1,4 @@
-package com.boni.stemflow.core.designsystem.component
+package com.boni.stemflow.core.ui.component
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -20,6 +20,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.boni.stemflow.core.designsystem.component.Thumbnail
 import com.boni.stemflow.core.designsystem.theme.StemflowTheme
 
 @Composable

@@ -1,4 +1,4 @@
-package com.boni.stemflow.core.designsystem.component
+package com.boni.stemflow.core.ui.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -25,6 +25,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.boni.stemflow.core.designsystem.component.Thumbnail
 import com.boni.stemflow.core.designsystem.theme.StemflowTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
