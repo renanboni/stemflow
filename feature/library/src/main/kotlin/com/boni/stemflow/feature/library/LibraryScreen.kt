@@ -1,6 +1,9 @@
 package com.boni.stemflow.feature.library
 
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -119,14 +122,18 @@ internal fun LibraryScreen(
                     count = pagedItems.itemCount,
                     key = pagedItems.itemKey { "search-${it.trackId}" },
                 ) { idx ->
-                    val track = pagedItems[idx] ?: return@items
-                    SongRow(
-                        title = track.name,
-                        artist = track.artistName,
-                        artworkUrl = track.artworkUrl100,
-                        onClick = { onTrackClick(track.trackId) },
-                        onMoreClick = { selectedTrack = track },
-                    )
+                    val track = pagedItems[idx]
+                    if (track == null) {
+                        Spacer(modifier = Modifier.fillMaxWidth().height(72.dp))
+                    } else {
+                        SongRow(
+                            title = track.name,
+                            artist = track.artistName,
+                            artworkUrl = track.artworkUrl100,
+                            onClick = { onTrackClick(track.trackId) },
+                            onMoreClick = { selectedTrack = track },
+                        )
+                    }
                 }
                 when (pagedItems.loadState.append) {
                     is LoadState.Loading -> item { AppendSpinner() }
