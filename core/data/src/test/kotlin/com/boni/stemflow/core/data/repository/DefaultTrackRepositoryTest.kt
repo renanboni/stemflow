@@ -1,6 +1,7 @@
 package com.boni.stemflow.core.data.repository
 
 import app.cash.turbine.test
+import com.boni.stemflow.core.common.time.Clock
 import com.boni.stemflow.core.database.dao.RecentlyPlayedDao
 import com.boni.stemflow.core.database.dao.TrackDao
 import com.boni.stemflow.core.database.entity.RecentlyPlayedEntity
@@ -18,14 +19,14 @@ class DefaultTrackRepositoryTest {
 
     private lateinit var trackDao: FakeTrackDao
     private lateinit var recentDao: FakeRecentlyPlayedDao
-    private var clock: () -> Long = { 42L }
+    private var nowMs: Long = 42L
     private lateinit var repo: DefaultTrackRepository
 
     @Before
     fun setUp() {
         trackDao = FakeTrackDao()
         recentDao = FakeRecentlyPlayedDao(trackDao)
-        repo = DefaultTrackRepository(trackDao, recentDao) { clock() }
+        repo = DefaultTrackRepository(trackDao, recentDao, Clock { nowMs })
     }
 
     @Test
@@ -43,7 +44,7 @@ class DefaultTrackRepositoryTest {
 
     @Test
     fun `markPlayed uses the supplied clock`() = runTest {
-        clock = { 999L }
+        nowMs = 999L
         trackDao.upsertAll(listOf(trackEntity(1L)))
         repo.markPlayed(1L)
 

@@ -1,5 +1,6 @@
 package com.boni.stemflow.core.data.repository
 
+import com.boni.stemflow.core.common.time.Clock
 import com.boni.stemflow.core.data.mapper.toDomain
 import com.boni.stemflow.core.database.dao.RecentlyPlayedDao
 import com.boni.stemflow.core.database.dao.TrackDao
@@ -14,7 +15,7 @@ import javax.inject.Singleton
 class DefaultTrackRepository @Inject constructor(
     private val trackDao: TrackDao,
     private val recentlyPlayedDao: RecentlyPlayedDao,
-    private val clock: () -> Long = System::currentTimeMillis,
+    private val clock: Clock,
 ) : TrackRepository {
 
     override fun getRecentlyPlayed(): Flow<List<Track>> =
@@ -24,6 +25,6 @@ class DefaultTrackRepository @Inject constructor(
         trackDao.observeById(trackId).map { it?.toDomain() }
 
     override suspend fun markPlayed(trackId: Long) {
-        recentlyPlayedDao.markPlayed(trackId = trackId, nowMs = clock())
+        recentlyPlayedDao.markPlayed(trackId = trackId, nowMs = clock.nowMillis())
     }
 }
