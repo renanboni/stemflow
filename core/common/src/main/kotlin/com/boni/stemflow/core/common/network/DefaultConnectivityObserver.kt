@@ -49,3 +49,4 @@ class DefaultConnectivityObserver @Inject constructor(
         awaitClose { manager.unregisterNetworkCallback(callback) }
     }.distinctUntilChanged()
 }
+
