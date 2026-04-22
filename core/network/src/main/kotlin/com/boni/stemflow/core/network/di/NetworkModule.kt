@@ -37,7 +37,7 @@ object NetworkProvidersModule {
         .callTimeout(CALL_TIMEOUT_SECONDS, TimeUnit.SECONDS)
         .addInterceptor(
             HttpLoggingInterceptor().apply {
-                level = HttpLoggingInterceptor.Level.BASIC
+                level = HttpLoggingInterceptor.Level.BODY
             },
         )
         .build()
