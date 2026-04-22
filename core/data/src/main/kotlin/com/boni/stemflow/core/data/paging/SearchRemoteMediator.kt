@@ -1,5 +1,6 @@
 package com.boni.stemflow.core.data.paging
 
+import android.util.Log
 import androidx.paging.ExperimentalPagingApi
 import androidx.paging.LoadType
 import androidx.paging.PagingState
@@ -15,6 +16,7 @@ import retrofit2.HttpException
 import java.io.IOException
 
 const val SEARCH_PAGE_SIZE = 25
+private const val TAG = "SearchMediator"
 
 @OptIn(ExperimentalPagingApi::class)
 class SearchRemoteMediator(
@@ -23,10 +25,19 @@ class SearchRemoteMediator(
     private val db: StemflowDatabase,
 ) : RemoteMediator<Int, TrackEntity>() {
 
+    override suspend fun initialize(): InitializeAction {
+        val action = super.initialize()
+        Log.d(TAG, "initialize(query=$query) -> $action")
+        return action
+    }
+
     override suspend fun load(
         loadType: LoadType,
         state: PagingState<Int, TrackEntity>,
     ): MediatorResult = try {
+        val loadedCount = state.pages.sumOf { it.data.size }
+        Log.d(TAG, "load(type=$loadType, query=$query, loaded=$loadedCount, anchorPos=${state.anchorPosition})")
+
         val nextPage = when (loadType) {
             LoadType.REFRESH -> 0
             LoadType.PREPEND -> return MediatorResult.Success(endOfPaginationReached = true)
@@ -40,6 +51,7 @@ class SearchRemoteMediator(
         val offset = nextPage * SEARCH_PAGE_SIZE
         val tracks = network.search(term = query, limit = SEARCH_PAGE_SIZE, offset = offset)
         val endReached = tracks.size < SEARCH_PAGE_SIZE
+        Log.d(TAG, "  -> nextPage=$nextPage offset=$offset received=${tracks.size} endReached=$endReached")
 
         db.withTransaction {
             if (loadType == LoadType.REFRESH) {
