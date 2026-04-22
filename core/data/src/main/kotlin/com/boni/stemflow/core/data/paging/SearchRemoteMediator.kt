@@ -15,6 +15,7 @@ import retrofit2.HttpException
 import java.io.IOException
 
 const val SEARCH_PAGE_SIZE = 25
+const val SEARCH_MAX_PAGES = 8
 
 @OptIn(ExperimentalPagingApi::class)
 class SearchRemoteMediator(
@@ -39,7 +40,7 @@ class SearchRemoteMediator(
 
         val offset = nextPage * SEARCH_PAGE_SIZE
         val tracks = network.search(term = query, limit = SEARCH_PAGE_SIZE, offset = offset)
-        val endReached = tracks.size < SEARCH_PAGE_SIZE
+        val endReached = tracks.size < SEARCH_PAGE_SIZE || (nextPage + 1) >= SEARCH_MAX_PAGES
 
         db.withTransaction {
             if (loadType == LoadType.REFRESH) {
