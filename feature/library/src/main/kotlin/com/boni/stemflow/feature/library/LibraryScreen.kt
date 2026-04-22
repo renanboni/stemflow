@@ -16,7 +16,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.LoadState
@@ -69,15 +71,24 @@ internal fun LibraryScreen(
     val isRefreshing = pagedItems.loadState.refresh is LoadState.Loading &&
         pagedItems.itemCount > 0
     val listState = rememberLazyListState()
-    val isCollapsed by remember { derivedStateOf { listState.canScrollBackward } }
     val scope = rememberCoroutineScope()
+    val collapseThresholdPx = with(LocalDensity.current) { 120.dp.toPx() }
+    val collapseProgress by remember(collapseThresholdPx) {
+        derivedStateOf {
+            if (listState.firstVisibleItemIndex == 0) {
+                (listState.firstVisibleItemScrollOffset / collapseThresholdPx).coerceIn(0f, 1f)
+            } else {
+                1f
+            }
+        }
+    }
 
     Scaffold(
         topBar = {
             LibraryHeader(
                 query = uiState.query,
                 onQueryChange = onQueryChange,
-                isCollapsed = isCollapsed,
+                collapseProgress = collapseProgress,
                 onSearchClick = { scope.launch { listState.animateScrollToItem(0) } },
             )
         },
