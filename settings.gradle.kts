@@ -27,7 +27,4 @@ rootProject.name = "stemflow"
 
 include(":app")
 
-// Module includes for core and feature modules are added in Task 0.5
-// once their build files exist.
-
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
