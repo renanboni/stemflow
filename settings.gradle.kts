@@ -27,4 +27,16 @@ rootProject.name = "stemflow"
 
 include(":app")
 
+include(":core:common")
+include(":core:domain")
+include(":core:testing")
+include(":core:network")
+include(":core:database")
+include(":core:data")
+include(":core:designsystem")
+
+include(":feature:search")
+include(":feature:player")
+include(":feature:album")
+
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
