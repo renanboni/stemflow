@@ -1,9 +1,10 @@
 package com.boni.stemflow.feature.library.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.windowInsetsPadding
@@ -53,20 +54,24 @@ private fun ExpandedHeader(query: String, onQueryChange: (String) -> Unit) {
 
 @Composable
 private fun CollapsedHeader(onSearchClick: () -> Unit) {
-    Row(
-        modifier = Modifier.padding(horizontal = 24.dp, vertical = 12.dp),
-        verticalAlignment = Alignment.CenterVertically,
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 12.dp),
     ) {
-        Text(
-            text = "Songs",
-            style = MaterialTheme.typography.titleMedium,
-            color = MaterialTheme.colorScheme.onSurface,
-            modifier = Modifier.weight(1f),
-        )
         GlassIconButton(
             icon = painterResource(R.drawable.ic_search),
             contentDescription = "Search",
             onClick = onSearchClick,
+            modifier = Modifier
+                .align(Alignment.CenterStart)
+                .padding(start = 20.dp),
+        )
+        Text(
+            text = "Songs",
+            style = MaterialTheme.typography.titleMedium,
+            color = MaterialTheme.colorScheme.onSurface,
+            modifier = Modifier.align(Alignment.Center),
         )
     }
 }
