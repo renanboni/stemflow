@@ -1,6 +1,7 @@
 package com.boni.stemflow.core.designsystem.component
 
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Pause
 import androidx.compose.material.icons.filled.PlayArrow
@@ -23,6 +24,7 @@ fun PlayButton(
     FilledIconButton(
         onClick = onClick,
         modifier = modifier.size(56.dp),
+        shape = CircleShape,
         colors = IconButtonDefaults.filledIconButtonColors(
             containerColor = MaterialTheme.colorScheme.primary,
             contentColor = MaterialTheme.colorScheme.onPrimary,

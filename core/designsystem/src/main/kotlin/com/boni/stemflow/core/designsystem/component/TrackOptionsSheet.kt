@@ -1,15 +1,17 @@
 package com.boni.stemflow.core.designsystem.component
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Album
-import androidx.compose.material.icons.filled.PlayArrow
-import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -19,6 +21,7 @@ import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -30,9 +33,7 @@ fun TrackOptionsSheet(
     title: String,
     artist: String,
     artworkUrl: String?,
-    onPlay: () -> Unit,
     onOpenAlbum: () -> Unit,
-    onShare: () -> Unit,
     onDismiss: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -40,6 +41,9 @@ fun TrackOptionsSheet(
     ModalBottomSheet(
         onDismissRequest = onDismiss,
         sheetState = sheetState,
+        shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
+        containerColor = MaterialTheme.colorScheme.surfaceVariant,
+        dragHandle = { StemflowDragHandle() },
         modifier = modifier,
     ) {
         Column(
@@ -64,11 +68,20 @@ fun TrackOptionsSheet(
                     )
                 }
             }
-            SheetAction(icon = Icons.Default.PlayArrow, label = "Play", onClick = onPlay)
             SheetAction(icon = Icons.Default.Album, label = "View album", onClick = onOpenAlbum)
-            SheetAction(icon = Icons.Default.Share, label = "Share", onClick = onShare)
         }
     }
+}
+
+@Composable
+private fun StemflowDragHandle() {
+    Box(
+        modifier = Modifier
+            .padding(vertical = 12.dp)
+            .size(width = 148.dp, height = 5.dp)
+            .clip(RoundedCornerShape(2.5.dp))
+            .background(MaterialTheme.colorScheme.onSurfaceVariant),
+    )
 }
 
 @Composable
@@ -106,9 +119,7 @@ private fun TrackOptionsSheetPreview() {
             title = "Song Title",
             artist = "Artist Name",
             artworkUrl = null,
-            onPlay = {},
             onOpenAlbum = {},
-            onShare = {},
             onDismiss = {},
         )
     }

@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.Icon
@@ -63,6 +64,7 @@ fun SongRow(
             Icon(
                 imageVector = Icons.Default.MoreVert,
                 contentDescription = "More options for $title",
+                modifier = Modifier.size(20.dp),
                 tint = MaterialTheme.colorScheme.onSurface,
             )
         }
