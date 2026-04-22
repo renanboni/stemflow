@@ -5,7 +5,7 @@
 
     <style name="Theme.Stemflow.Splash" parent="Theme.SplashScreen">
         <item name="windowSplashScreenBackground">@color/splash_background</item>
-        <item name="windowSplashScreenAnimatedIcon">@mipmap/ic_launcher_foreground</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/ic_splash</item>
         <item name="android:windowBackground">@drawable/splash_gradient</item>
         <item name="postSplashScreenTheme">@style/Theme.Stemflow</item>
     </style>
