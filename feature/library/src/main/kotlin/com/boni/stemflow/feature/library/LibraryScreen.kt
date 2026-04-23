@@ -29,6 +29,7 @@ import androidx.paging.PagingData
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemKey
+import com.boni.stemflow.core.designsystem.modifier.fadingEdges
 import com.boni.stemflow.core.designsystem.theme.StemflowTheme
 import com.boni.stemflow.core.domain.model.Track
 import com.boni.stemflow.core.ui.component.SongRow
@@ -103,7 +104,12 @@ internal fun LibraryScreen(
                 .padding(inner)
                 .fillMaxSize(),
         ) {
-            LazyColumn(state = listState, modifier = Modifier.fillMaxSize()) {
+            LazyColumn(
+                state = listState,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .fadingEdges(),
+            ) {
                 if (uiState.isOffline) {
                     item { OfflineBanner() }
                 }
