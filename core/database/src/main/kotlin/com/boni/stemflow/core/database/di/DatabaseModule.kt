@@ -5,8 +5,6 @@ import androidx.room.Room
 import com.boni.stemflow.core.database.StemflowDatabase
 import com.boni.stemflow.core.database.dao.AlbumDao
 import com.boni.stemflow.core.database.dao.RecentlyPlayedDao
-import com.boni.stemflow.core.database.dao.RemoteKeysDao
-import com.boni.stemflow.core.database.dao.SearchResultDao
 import com.boni.stemflow.core.database.dao.TrackDao
 import dagger.Module
 import dagger.Provides
@@ -38,10 +36,4 @@ object DatabaseModule {
 
     @Provides
     fun provideRecentlyPlayedDao(db: StemflowDatabase): RecentlyPlayedDao = db.recentlyPlayedDao()
-
-    @Provides
-    fun provideSearchResultDao(db: StemflowDatabase): SearchResultDao = db.searchResultDao()
-
-    @Provides
-    fun provideRemoteKeysDao(db: StemflowDatabase): RemoteKeysDao = db.remoteKeysDao()
 }
