@@ -11,10 +11,10 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -39,7 +39,7 @@ internal fun PlayerControls(
             Icon(
                 painter = painterResource(R.drawable.ic_backward),
                 contentDescription = "Previous",
-                tint = Color.White,
+                tint = MaterialTheme.colorScheme.onBackground,
                 modifier = Modifier.size(36.dp),
             )
         }
@@ -51,14 +51,14 @@ internal fun PlayerControls(
             contentDescription = if (isPlaying) "Pause" else "Play",
             onClick = onTogglePlayPause,
             size = 72.dp,
-            containerColor = Color.White.copy(alpha = 0.2f),
+            containerColor = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.2f),
         )
         Spacer(Modifier.width(28.dp))
         IconButton(onClick = onSkipForward) {
             Icon(
                 painter = painterResource(R.drawable.ic_forward),
                 contentDescription = "Next",
-                tint = Color.White,
+                tint = MaterialTheme.colorScheme.onBackground,
                 modifier = Modifier.size(36.dp),
             )
         }
@@ -71,7 +71,7 @@ private fun PlayerControlsPlayingPreview() {
     StemflowTheme {
         Box(
             modifier = Modifier
-                .background(Color.Black)
+                .background(MaterialTheme.colorScheme.background)
                 .padding(24.dp),
         ) {
             PlayerControls(
@@ -90,7 +90,7 @@ private fun PlayerControlsPausedPreview() {
     StemflowTheme {
         Box(
             modifier = Modifier
-                .background(Color.Black)
+                .background(MaterialTheme.colorScheme.background)
                 .padding(24.dp),
         ) {
             PlayerControls(

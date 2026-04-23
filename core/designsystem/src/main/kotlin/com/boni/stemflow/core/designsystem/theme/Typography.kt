@@ -9,6 +9,12 @@ import androidx.compose.ui.unit.sp
 private val Stemflow = FontFamily.SansSerif
 
 val StemflowTypography = Typography(
+    displayMedium = TextStyle(
+        fontFamily = Stemflow,
+        fontWeight = FontWeight.SemiBold,
+        fontSize = 32.sp,
+        lineHeight = 38.4.sp,
+    ),
     headlineLarge = TextStyle(
         fontFamily = Stemflow,
         fontWeight = FontWeight.SemiBold,

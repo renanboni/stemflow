@@ -14,6 +14,8 @@ import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.ui.NavDisplay
+import com.boni.stemflow.feature.album.AlbumScreen
+import com.boni.stemflow.feature.album.AlbumViewModel
 import com.boni.stemflow.feature.album.navigation.AlbumRoute
 import com.boni.stemflow.feature.library.LibraryScreen
 import com.boni.stemflow.feature.library.navigation.LibraryRoute
@@ -49,7 +51,16 @@ fun MainNavigation() {
                 )
             }
             entry<AlbumRoute> { route ->
-                PlaceholderScreen("Album — ${route.albumId}")
+                val viewModel: AlbumViewModel = hiltViewModel(
+                    creationCallback = { factory: AlbumViewModel.Factory ->
+                        factory.create(route.albumId)
+                    },
+                )
+                AlbumScreen(
+                    viewModel = viewModel,
+                    onBack = { backStack.removeLastOrNull() },
+                    onTrackClick = { trackId -> backStack.add(PlayerRoute(trackId)) },
+                )
             }
         },
     )
