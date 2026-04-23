@@ -22,4 +22,10 @@ class ITunesNetworkDataSource @Inject constructor(
     override suspend fun lookupAlbum(collectionId: Long): Album =
         api.lookup(id = collectionId).toAlbumOrNull()
             ?: throw IOException("Album not found or empty response: $collectionId")
+
+    override suspend fun getTrack(trackId: Long): Track? =
+        api.lookup(id = trackId, entity = "song")
+            .results
+            .firstOrNull()
+            ?.toDomainOrNull()
 }

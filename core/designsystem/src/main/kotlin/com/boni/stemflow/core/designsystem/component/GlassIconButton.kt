@@ -1,5 +1,6 @@
 package com.boni.stemflow.core.designsystem.component
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
@@ -32,6 +33,7 @@ fun GlassIconButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     size: Dp = 56.dp,
+    containerColor: Color = Color.Transparent,
 ) {
     val onSurface = MaterialTheme.colorScheme.onSurface
 
@@ -39,6 +41,7 @@ fun GlassIconButton(
         modifier = modifier
             .size(size)
             .clip(CircleShape)
+            .background(containerColor)
             .drawBehind {
                 val strokePx = 1.dp.toPx()
                 val center = Offset(this.size.width / 2f, this.size.height / 2f)

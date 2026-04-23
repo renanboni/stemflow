@@ -16,6 +16,9 @@ interface TrackDao {
     @Query("SELECT * FROM tracks WHERE trackId = :trackId")
     fun observeById(trackId: Long): Flow<TrackEntity?>
 
+    @Query("SELECT * FROM tracks WHERE trackId = :trackId")
+    suspend fun getById(trackId: Long): TrackEntity?
+
     @Query("SELECT * FROM tracks WHERE trackId IN (:ids)")
     suspend fun getAllByIds(ids: List<Long>): List<TrackEntity>
 

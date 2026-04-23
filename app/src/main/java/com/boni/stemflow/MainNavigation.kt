@@ -8,12 +8,17 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
+import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.ui.NavDisplay
 import com.boni.stemflow.feature.album.navigation.AlbumRoute
 import com.boni.stemflow.feature.library.LibraryScreen
 import com.boni.stemflow.feature.library.navigation.LibraryRoute
+import com.boni.stemflow.feature.player.PlayerScreen
+import com.boni.stemflow.feature.player.PlayerViewModel
 import com.boni.stemflow.feature.player.navigation.PlayerRoute
 
 @Composable
@@ -21,6 +26,10 @@ fun MainNavigation() {
     val backStack = rememberNavBackStack(LibraryRoute)
     NavDisplay(
         backStack = backStack,
+        entryDecorators = listOf(
+            rememberSaveableStateHolderNavEntryDecorator(),
+            rememberViewModelStoreNavEntryDecorator(),
+        ),
         entryProvider = entryProvider {
             entry<LibraryRoute> {
                 LibraryScreen(
@@ -29,7 +38,15 @@ fun MainNavigation() {
                 )
             }
             entry<PlayerRoute> { route ->
-                PlaceholderScreen("Player — track ${route.trackId}")
+                val viewModel: PlayerViewModel = hiltViewModel(
+                    creationCallback = { factory: PlayerViewModel.Factory ->
+                        factory.create(route.trackId)
+                    },
+                )
+                PlayerScreen(
+                    viewModel = viewModel,
+                    onBack = { backStack.removeLastOrNull() },
+                )
             }
             entry<AlbumRoute> { route ->
                 PlaceholderScreen("Album — ${route.albumId}")

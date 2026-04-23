@@ -5,6 +5,6 @@ import kotlinx.coroutines.flow.Flow
 
 interface TrackRepository {
     fun getRecentlyPlayed(): Flow<List<Track>>
-    fun getTrack(trackId: Long): Flow<Track?>
+    suspend fun getTrack(trackId: Long): Track?
     suspend fun markPlayed(trackId: Long)
 }

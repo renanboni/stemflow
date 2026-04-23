@@ -38,7 +38,7 @@ class LibraryViewModelTest {
     private val recent = MutableStateFlow<List<Track>>(emptyList())
     private val trackRepo = object : TrackRepository {
         override fun getRecentlyPlayed(): Flow<List<Track>> = recent
-        override fun getTrack(trackId: Long): Flow<Track?> = flowOf(null)
+        override suspend fun getTrack(trackId: Long): Track? = null
         override suspend fun markPlayed(trackId: Long) = Unit
     }
 

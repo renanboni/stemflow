@@ -6,6 +6,7 @@ import com.boni.stemflow.core.database.dao.RecentlyPlayedDao
 import com.boni.stemflow.core.database.dao.TrackDao
 import com.boni.stemflow.core.database.entity.RecentlyPlayedEntity
 import com.boni.stemflow.core.database.entity.TrackEntity
+import com.boni.stemflow.core.testing.fakes.FakeNetworkDataSource
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.map
@@ -19,6 +20,7 @@ class DefaultTrackRepositoryTest {
 
     private lateinit var trackDao: FakeTrackDao
     private lateinit var recentDao: FakeRecentlyPlayedDao
+    private lateinit var network: FakeNetworkDataSource
     private var nowMs: Long = 42L
     private lateinit var repo: DefaultTrackRepository
 
@@ -26,7 +28,8 @@ class DefaultTrackRepositoryTest {
     fun setUp() {
         trackDao = FakeTrackDao()
         recentDao = FakeRecentlyPlayedDao(trackDao)
-        repo = DefaultTrackRepository(trackDao, recentDao, Clock { nowMs })
+        network = FakeNetworkDataSource()
+        repo = DefaultTrackRepository(trackDao, recentDao, network, Clock { nowMs })
     }
 
     @Test
@@ -52,11 +55,8 @@ class DefaultTrackRepositoryTest {
     }
 
     @Test
-    fun `getTrack emits null when missing`() = runTest {
-        repo.getTrack(999L).test {
-            assertNull(awaitItem())
-            cancelAndConsumeRemainingEvents()
-        }
+    fun `getTrack returns null when network misses`() = runTest {
+        assertNull(repo.getTrack(999L))
     }
 
     private fun trackEntity(id: Long) = TrackEntity(
@@ -87,6 +87,8 @@ private class FakeTrackDao : TrackDao {
 
     override fun observeById(trackId: Long): Flow<TrackEntity?> =
         changes.map { stored[trackId] }
+
+    override suspend fun getById(trackId: Long): TrackEntity? = stored[trackId]
 
     override suspend fun getAllByIds(ids: List<Long>): List<TrackEntity> =
         ids.mapNotNull { stored[it] }
