@@ -12,14 +12,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import com.boni.stemflow.core.designsystem.animation.sharedArtwork
 import com.boni.stemflow.core.designsystem.theme.StemflowTheme
 import com.boni.stemflow.core.designsystem.theme.cover
 
-/**
- * Artwork image with the app's standard placeholder tint. Caller picks the shape and sizes the
- * image via [modifier]. Pass a positive [shadowElevation] for covers that sit on a dark surface
- * and need lift (e.g. the 120dp album cover).
- */
 @Composable
 fun ArtworkImage(
     url: String?,
@@ -27,17 +23,19 @@ fun ArtworkImage(
     shape: Shape,
     modifier: Modifier = Modifier,
     shadowElevation: Dp = 0.dp,
+    sharedKey: Any? = null,
 ) {
     val placeholder = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.08f)
-    val base = if (shadowElevation > 0.dp) {
-        modifier.shadow(elevation = shadowElevation, shape = shape)
+    val shared = if (sharedKey != null) modifier.sharedArtwork(sharedKey) else modifier
+    val elevated = if (shadowElevation > 0.dp) {
+        shared.shadow(elevation = shadowElevation, shape = shape)
     } else {
-        modifier
+        shared
     }
     AsyncImage(
         model = url,
         contentDescription = contentDescription,
-        modifier = base
+        modifier = elevated
             .clip(shape)
             .background(placeholder),
     )

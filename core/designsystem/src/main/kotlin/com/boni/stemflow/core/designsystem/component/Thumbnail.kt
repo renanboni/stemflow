@@ -10,6 +10,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import com.boni.stemflow.core.designsystem.animation.sharedArtwork
 import com.boni.stemflow.core.designsystem.theme.StemflowTheme
 
 @Composable
@@ -18,12 +19,14 @@ fun Thumbnail(
     contentDescription: String?,
     modifier: Modifier = Modifier,
     size: Dp = 52.dp,
+    sharedKey: Any? = null,
 ) {
+    val sized = modifier.size(size)
+    val shared = if (sharedKey != null) sized.sharedArtwork(sharedKey) else sized
     AsyncImage(
         model = url,
         contentDescription = contentDescription,
-        modifier = modifier
-            .size(size)
+        modifier = shared
             .clip(MaterialTheme.shapes.small)
             .background(MaterialTheme.colorScheme.surfaceVariant),
     )

@@ -143,6 +143,7 @@ private fun PlayerBody(
             contentDescription = track.collectionName,
             shape = MaterialTheme.shapes.extraLarge,
             modifier = Modifier.size(264.dp),
+            sharedKey = "artwork-${track.trackId}",
         )
         Spacer(Modifier.weight(1f))
         Column(

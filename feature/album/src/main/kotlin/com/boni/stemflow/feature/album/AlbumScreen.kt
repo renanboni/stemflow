@@ -167,6 +167,7 @@ private fun TrackList(
                 artworkUrl = track.artworkUrl100,
                 onClick = { onTrackClick(track.trackId) },
                 onMoreClick = {},
+                sharedKey = "artwork-${track.trackId}",
             )
         }
     }

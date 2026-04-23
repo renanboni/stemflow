@@ -31,6 +31,7 @@ fun SongRow(
     onClick: () -> Unit,
     onMoreClick: () -> Unit,
     modifier: Modifier = Modifier,
+    sharedKey: Any? = null,
 ) {
     Row(
         modifier = modifier
@@ -39,7 +40,7 @@ fun SongRow(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
-        Thumbnail(url = artworkUrl, contentDescription = null)
+        Thumbnail(url = artworkUrl, contentDescription = null, sharedKey = sharedKey)
         Column(
             modifier = Modifier
                 .weight(1f)

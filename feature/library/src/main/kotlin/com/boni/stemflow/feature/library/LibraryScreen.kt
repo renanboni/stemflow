@@ -121,6 +121,7 @@ internal fun LibraryScreen(
                             artworkUrl = track.artworkUrl100,
                             onClick = { onTrackClick(track.trackId) },
                             onMoreClick = { selectedTrack = track },
+                            sharedKey = "artwork-${track.trackId}",
                         )
                     }
                 }
@@ -138,6 +139,7 @@ internal fun LibraryScreen(
                             artworkUrl = track.artworkUrl100,
                             onClick = { onTrackClick(track.trackId) },
                             onMoreClick = { selectedTrack = track },
+                            sharedKey = "artwork-${track.trackId}",
                         )
                     }
                 }
