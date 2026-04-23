@@ -1,4 +1,4 @@
-package com.boni.stemflow.feature.library.components
+package com.boni.stemflow.core.designsystem.component
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -12,7 +12,7 @@ import androidx.compose.ui.unit.dp
 import com.boni.stemflow.core.designsystem.theme.StemflowTheme
 
 @Composable
-internal fun OfflineBanner(modifier: Modifier = Modifier) {
+fun OfflineBanner(modifier: Modifier = Modifier) {
     Surface(
         color = MaterialTheme.colorScheme.surfaceVariant,
         modifier = modifier.fillMaxWidth(),

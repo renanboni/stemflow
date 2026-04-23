@@ -1,4 +1,4 @@
-package com.boni.stemflow.feature.library.components
+package com.boni.stemflow.core.ui.component
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -15,7 +15,7 @@ import androidx.compose.ui.unit.dp
 import com.boni.stemflow.core.designsystem.theme.StemflowTheme
 
 @Composable
-internal fun AppendSpinner(modifier: Modifier = Modifier) {
+fun AppendSpinner(modifier: Modifier = Modifier) {
     Box(
         modifier = modifier
             .fillMaxWidth()
@@ -27,7 +27,7 @@ internal fun AppendSpinner(modifier: Modifier = Modifier) {
 }
 
 @Composable
-internal fun AppendError(modifier: Modifier = Modifier) {
+fun AppendError(modifier: Modifier = Modifier) {
     Text(
         text = "Load error — pull to retry",
         style = MaterialTheme.typography.bodyMedium,

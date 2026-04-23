@@ -1,8 +1,7 @@
-package com.boni.stemflow.feature.library.components
+package com.boni.stemflow.core.designsystem.component
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -23,7 +22,7 @@ import com.boni.stemflow.core.designsystem.theme.StemflowTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-internal fun SearchField(
+fun SearchField(
     query: String,
     onQueryChange: (String) -> Unit,
     modifier: Modifier = Modifier,
@@ -41,7 +40,7 @@ internal fun SearchField(
                 )
             },
             singleLine = true,
-            shape = RoundedCornerShape(12.dp),
+            shape = MaterialTheme.shapes.medium,
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
             colors = TextFieldDefaults.colors(
                 focusedContainerColor = fill,

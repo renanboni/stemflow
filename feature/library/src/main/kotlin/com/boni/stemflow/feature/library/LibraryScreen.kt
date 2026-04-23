@@ -29,15 +29,15 @@ import androidx.paging.PagingData
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemKey
+import com.boni.stemflow.core.designsystem.component.OfflineBanner
 import com.boni.stemflow.core.designsystem.modifier.fadingEdges
 import com.boni.stemflow.core.designsystem.theme.StemflowTheme
 import com.boni.stemflow.core.domain.model.Track
+import com.boni.stemflow.core.ui.component.AppendError
+import com.boni.stemflow.core.ui.component.AppendSpinner
 import com.boni.stemflow.core.ui.component.SongRow
 import com.boni.stemflow.core.ui.component.TrackOptionsSheet
-import com.boni.stemflow.feature.library.components.AppendError
-import com.boni.stemflow.feature.library.components.AppendSpinner
 import com.boni.stemflow.feature.library.components.LibraryHeader
-import com.boni.stemflow.feature.library.components.OfflineBanner
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
 

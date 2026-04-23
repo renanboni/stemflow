@@ -24,6 +24,7 @@ import androidx.compose.ui.unit.lerp
 import androidx.compose.ui.unit.sp
 import com.boni.stemflow.core.designsystem.R
 import com.boni.stemflow.core.designsystem.component.GlassIconButton
+import com.boni.stemflow.core.designsystem.component.SearchField
 import com.boni.stemflow.core.designsystem.theme.StemflowTheme
 
 @Composable

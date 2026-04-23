@@ -10,7 +10,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -28,14 +28,17 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.boni.stemflow.core.designsystem.R as DesignR
+import com.boni.stemflow.core.designsystem.component.ArtworkImage
+import com.boni.stemflow.core.designsystem.component.ErrorState
 import com.boni.stemflow.core.designsystem.component.GlassIconButton
+import com.boni.stemflow.core.designsystem.component.LoadingState
 import com.boni.stemflow.core.designsystem.modifier.fadingEdges
 import com.boni.stemflow.core.designsystem.theme.StemflowTheme
+import com.boni.stemflow.core.designsystem.theme.cover
 import com.boni.stemflow.core.designsystem.theme.textTertiary
 import com.boni.stemflow.core.domain.model.Album
 import com.boni.stemflow.core.domain.model.Track
 import com.boni.stemflow.core.ui.component.SongRow
-import com.boni.stemflow.feature.album.components.AlbumCover
 
 @Composable
 fun AlbumScreen(
@@ -109,9 +112,12 @@ private fun AlbumBody(
         modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        AlbumCover(
-            artworkUrl = album.artworkUrl600,
+        ArtworkImage(
+            url = album.artworkUrl600,
             contentDescription = album.name,
+            shape = MaterialTheme.shapes.cover,
+            shadowElevation = 24.dp,
+            modifier = Modifier.size(120.dp),
         )
         Spacer(Modifier.height(20.dp))
         Text(
@@ -163,27 +169,6 @@ private fun TrackList(
                 onMoreClick = {},
             )
         }
-    }
-}
-
-@Composable
-private fun LoadingState(modifier: Modifier = Modifier) {
-    Box(modifier = modifier, contentAlignment = Alignment.Center) {
-        CircularProgressIndicator(color = MaterialTheme.colorScheme.onBackground)
-    }
-}
-
-@Composable
-private fun ErrorState(message: String, modifier: Modifier = Modifier) {
-    Box(
-        modifier = modifier.padding(horizontal = 24.dp),
-        contentAlignment = Alignment.Center,
-    ) {
-        Text(
-            text = message,
-            style = MaterialTheme.typography.bodyLarge,
-            color = MaterialTheme.colorScheme.onBackground,
-        )
     }
 }
 

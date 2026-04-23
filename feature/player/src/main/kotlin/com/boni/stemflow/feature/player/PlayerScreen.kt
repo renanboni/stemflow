@@ -8,10 +8,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -20,13 +19,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.boni.stemflow.core.designsystem.component.ArtworkImage
+import com.boni.stemflow.core.designsystem.component.ErrorState
+import com.boni.stemflow.core.designsystem.component.LoadingState
 import com.boni.stemflow.core.designsystem.theme.StemflowTheme
 import com.boni.stemflow.core.domain.model.Track
-import com.boni.stemflow.feature.player.components.CoverArt
 import com.boni.stemflow.feature.player.components.PlaybackTime
+import com.boni.stemflow.feature.player.components.PlayerControls
 import com.boni.stemflow.feature.player.components.PlayerHeader
 import com.boni.stemflow.feature.player.components.TrackInfo
-import com.boni.stemflow.feature.player.components.PlayerControls
 
 private const val SKIP_INTERVAL_MS = 10_000L
 
@@ -137,9 +138,11 @@ private fun PlayerBody(
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Spacer(Modifier.weight(1f))
-        CoverArt(
-            artworkUrl = track.artworkUrl600 ?: track.artworkUrl100,
+        ArtworkImage(
+            url = track.artworkUrl600 ?: track.artworkUrl100,
             contentDescription = track.collectionName,
+            shape = MaterialTheme.shapes.extraLarge,
+            modifier = Modifier.size(264.dp),
         )
         Spacer(Modifier.weight(1f))
         Column(
@@ -167,32 +170,6 @@ private fun PlayerBody(
             )
         }
         Spacer(Modifier.height(24.dp))
-    }
-}
-
-@Composable
-private fun LoadingState(modifier: Modifier = Modifier) {
-    Box(
-        modifier = modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center,
-    ) {
-        CircularProgressIndicator(color = MaterialTheme.colorScheme.onBackground)
-    }
-}
-
-@Composable
-private fun ErrorState(message: String, modifier: Modifier = Modifier) {
-    Box(
-        modifier = modifier
-            .fillMaxSize()
-            .padding(horizontal = 24.dp),
-        contentAlignment = Alignment.Center,
-    ) {
-        Text(
-            text = message,
-            style = MaterialTheme.typography.bodyLarge,
-            color = MaterialTheme.colorScheme.onBackground,
-        )
     }
 }
 
