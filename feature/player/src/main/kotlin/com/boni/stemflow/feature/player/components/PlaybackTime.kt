@@ -2,6 +2,7 @@ package com.boni.stemflow.feature.player.components
 
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.awaitEachGesture
@@ -31,7 +32,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
@@ -44,6 +45,7 @@ import kotlinx.coroutines.launch
 internal fun PlaybackTime(
     positionMs: Long,
     durationMs: Long,
+    amplitude: Float,
     onSeek: (Long) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -63,12 +65,17 @@ internal fun PlaybackTime(
                     mode = ScrubMode.Follow
                 }
             }
+
             ScrubMode.Follow -> {
                 progress.animateTo(
                     targetValue = rawProgress,
-                    animationSpec = tween(PROGRESS_TWEEN_MS, easing = LinearEasing),
+                    animationSpec = tween(
+                        durationMillis = PROGRESS_TWEEN_MS,
+                        easing = LinearEasing
+                    ),
                 )
             }
+
             ScrubMode.Dragging -> Unit
         }
     }
@@ -86,6 +93,7 @@ internal fun PlaybackTime(
     ) {
         SeekBar(
             progress = displayProgress,
+            amplitude = amplitude,
             enabled = durationMs > 0,
             onSeekStart = { fraction ->
                 mode = ScrubMode.Dragging
@@ -121,16 +129,25 @@ internal fun PlaybackTime(
 @Composable
 private fun SeekBar(
     progress: Float,
+    amplitude: Float,
     enabled: Boolean,
     onSeekStart: (Float) -> Unit,
     onSeekChange: (Float) -> Unit,
     onSeekCommit: () -> Unit,
 ) {
     val clamped = progress.coerceIn(0f, 1f)
+    val animatedAmplitude by animateFloatAsState(
+        targetValue = amplitude.coerceIn(0f, 1f),
+        animationSpec = tween(durationMillis = AMPLITUDE_TWEEN_MS, easing = LinearEasing),
+        label = "amplitude",
+    )
+    val barHeight = BAR_BASE_HEIGHT + BAR_AMPLITUDE_RANGE * animatedAmplitude
+    val handleScale = 1f + HANDLE_AMPLITUDE_SCALE * animatedAmplitude
+
     BoxWithConstraints(
         modifier = Modifier
             .fillMaxWidth()
-            .height(24.dp)
+            .height(32.dp)
             .let { base ->
                 if (!enabled) base
                 else base.pointerInput(Unit) {
@@ -154,7 +171,7 @@ private fun SeekBar(
             modifier = Modifier
                 .align(Alignment.CenterStart)
                 .fillMaxWidth()
-                .height(8.dp)
+                .height(barHeight)
                 .clip(CircleShape)
                 .background(onSurface.copy(alpha = 0.25f)),
         )
@@ -162,7 +179,7 @@ private fun SeekBar(
             modifier = Modifier
                 .align(Alignment.CenterStart)
                 .width(trackWidth * clamped)
-                .height(8.dp)
+                .height(barHeight)
                 .clip(CircleShape)
                 .background(onSurface.copy(alpha = 0.6f)),
         )
@@ -171,6 +188,7 @@ private fun SeekBar(
                 .align(Alignment.CenterStart)
                 .offset(x = (trackWidth * clamped) - HANDLE_HALF)
                 .size(24.dp)
+                .scale(handleScale)
                 .clip(CircleShape)
                 .background(onSurface),
         )
@@ -185,7 +203,11 @@ private fun formatTime(ms: Long): String {
 }
 
 private val HANDLE_HALF = 12.dp
+private val BAR_BASE_HEIGHT = 4.dp
+private val BAR_AMPLITUDE_RANGE = 18.dp
+private const val HANDLE_AMPLITUDE_SCALE = 0.35f
 private const val PROGRESS_TWEEN_MS = 500
+private const val AMPLITUDE_TWEEN_MS = 100
 private const val CATCH_UP_THRESHOLD = 0.02f
 
 private sealed interface ScrubMode {
@@ -206,6 +228,7 @@ private fun PlaybackTimePreview() {
             PlaybackTime(
                 positionMs = 86_000L,
                 durationMs = 260_000L,
+                amplitude = 0.6f,
                 onSeek = {},
             )
         }

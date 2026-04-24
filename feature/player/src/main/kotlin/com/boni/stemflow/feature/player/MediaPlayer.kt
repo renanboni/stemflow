@@ -10,6 +10,8 @@ import androidx.media3.common.PlaybackException
 import androidx.media3.common.Player
 import androidx.media3.exoplayer.ExoPlayer
 import com.boni.stemflow.core.domain.model.Track
+import com.boni.stemflow.feature.player.audio.AmplitudeAudioProcessor
+import com.boni.stemflow.feature.player.audio.AmplitudeRenderersFactory
 import kotlinx.coroutines.delay
 
 /**
@@ -24,7 +26,16 @@ fun MediaPlayer(
     state: PlayerPlaybackState,
 ) {
     val applicationContext = LocalContext.current.applicationContext
-    val exoPlayer = retain { ExoPlayer.Builder(applicationContext).build() }
+    val amplitudeProcessor = retain { AmplitudeAudioProcessor() }
+    val exoPlayer = retain {
+        ExoPlayer.Builder(applicationContext)
+            .setRenderersFactory(AmplitudeRenderersFactory(applicationContext, amplitudeProcessor))
+            .build()
+    }
+
+    LaunchedEffect(amplitudeProcessor) {
+        amplitudeProcessor.amplitude.collect { state.onAmplitudeChanged(it) }
+    }
 
     DisposableEffect(exoPlayer) {
         val listener = object : Player.Listener {
