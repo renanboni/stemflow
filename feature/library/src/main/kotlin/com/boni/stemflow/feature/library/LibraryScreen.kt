@@ -7,9 +7,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -17,6 +15,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
@@ -58,7 +57,6 @@ fun LibraryScreen(
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun LibraryScreen(
     uiState: LibraryUiState,
@@ -69,8 +67,6 @@ internal fun LibraryScreen(
     modifier: Modifier = Modifier,
 ) {
     var selectedTrack by remember { mutableStateOf<Track?>(null) }
-    val isRefreshing = pagedItems.loadState.refresh is LoadState.Loading &&
-        pagedItems.itemCount > 0
     val headerState = rememberCollapsibleHeaderState()
     val scope = rememberCoroutineScope()
 
@@ -87,58 +83,52 @@ internal fun LibraryScreen(
         },
         modifier = modifier,
     ) { inner ->
-        PullToRefreshBox(
-            isRefreshing = isRefreshing,
-            onRefresh = { pagedItems.refresh() },
+        LazyColumn(
+            state = headerState.listState,
             modifier = Modifier
                 .padding(inner)
-                .fillMaxSize(),
+                .fillMaxSize()
+                .nestedScroll(headerState.nestedScrollConnection)
+                .fadingEdges(),
         ) {
-            LazyColumn(
-                state = headerState.listState,
-                modifier = Modifier
-                    .fillMaxSize()
-                    .fadingEdges(),
-            ) {
-                if (uiState.isOffline) {
-                    item { OfflineBanner() }
+            if (uiState.isOffline) {
+                item { OfflineBanner() }
+            }
+            if (uiState.query.isBlank()) {
+                items(uiState.recentlyPlayed, key = { "recent-${it.trackId}" }) { track ->
+                    SongRow(
+                        title = track.name,
+                        artist = track.artistName,
+                        artworkUrl = track.artworkUrl100,
+                        onClick = { onTrackClick(track.trackId) },
+                        onMoreClick = { selectedTrack = track },
+                        sharedKey = "artwork-${track.trackId}",
+                        modifier = Modifier.animateItem(),
+                    )
                 }
-                if (uiState.query.isBlank()) {
-                    items(uiState.recentlyPlayed, key = { "recent-${it.trackId}" }) { track ->
-                        SongRow(
-                            title = track.name,
-                            artist = track.artistName,
-                            artworkUrl = track.artworkUrl100,
-                            onClick = { onTrackClick(track.trackId) },
-                            onMoreClick = { selectedTrack = track },
-                            sharedKey = "artwork-${track.trackId}",
-                            modifier = Modifier.animateItem(),
-                        )
-                    }
+            }
+            items(
+                count = pagedItems.itemCount,
+                key = pagedItems.itemKey { "search-${it.trackId}" },
+            ) { idx ->
+                val track = pagedItems[idx]
+                if (track == null) {
+                    Spacer(modifier = Modifier.fillMaxWidth().height(72.dp))
+                } else {
+                    SongRow(
+                        title = track.name,
+                        artist = track.artistName,
+                        artworkUrl = track.artworkUrl100,
+                        onClick = { onTrackClick(track.trackId) },
+                        onMoreClick = { selectedTrack = track },
+                        sharedKey = "artwork-${track.trackId}",
+                    )
                 }
-                items(
-                    count = pagedItems.itemCount,
-                    key = pagedItems.itemKey { "search-${it.trackId}" },
-                ) { idx ->
-                    val track = pagedItems[idx]
-                    if (track == null) {
-                        Spacer(modifier = Modifier.fillMaxWidth().height(72.dp))
-                    } else {
-                        SongRow(
-                            title = track.name,
-                            artist = track.artistName,
-                            artworkUrl = track.artworkUrl100,
-                            onClick = { onTrackClick(track.trackId) },
-                            onMoreClick = { selectedTrack = track },
-                            sharedKey = "artwork-${track.trackId}",
-                        )
-                    }
-                }
-                when (pagedItems.loadState.append) {
-                    is LoadState.Loading -> item { AppendSpinner() }
-                    is LoadState.Error -> item { AppendError() }
-                    else -> Unit
-                }
+            }
+            when (pagedItems.loadState.append) {
+                is LoadState.Loading -> item { AppendSpinner() }
+                is LoadState.Error -> item { AppendError() }
+                else -> Unit
             }
         }
     }
