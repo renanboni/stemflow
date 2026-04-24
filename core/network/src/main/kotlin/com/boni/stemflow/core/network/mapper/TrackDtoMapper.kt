@@ -3,8 +3,8 @@ package com.boni.stemflow.core.network.mapper
 import com.boni.stemflow.core.domain.model.Track
 import com.boni.stemflow.core.network.dto.TrackDto
 
-private const val SOURCE_SIZE_TOKEN = "100x100-75"
-private const val TARGET_SIZE_TOKEN = "600x600-75"
+private const val SOURCE_SIZE_TOKEN = "100x100"
+private const val TARGET_SIZE_TOKEN = "600x600"
 
 internal fun upscaleArtwork600(artworkUrl100: String?): String? =
     artworkUrl100?.replace(SOURCE_SIZE_TOKEN, TARGET_SIZE_TOKEN)
