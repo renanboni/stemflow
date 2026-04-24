@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -57,7 +58,13 @@ internal fun PlayerScreen(
 
     LaunchedEffect(track?.trackId) {
         playback.onTrackLoaded(track)
-        if (track != null) viewModel.onTrackPlayed(track.trackId)
+    }
+
+    DisposableEffect(track?.trackId) {
+        val playedTrackId = track?.trackId
+        onDispose {
+            if (playedTrackId != null) viewModel.onTrackPlayed(playedTrackId)
+        }
     }
 
     MediaPlayer(

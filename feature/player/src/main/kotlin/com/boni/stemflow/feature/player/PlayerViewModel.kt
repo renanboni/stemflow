@@ -2,11 +2,14 @@ package com.boni.stemflow.feature.player
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.boni.stemflow.core.common.di.ApplicationScope
 import com.boni.stemflow.core.domain.repository.TrackRepository
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.WhileSubscribed
@@ -19,6 +22,7 @@ import kotlin.time.Duration.Companion.seconds
 class PlayerViewModel @AssistedInject constructor(
     @Assisted private val trackId: Long,
     private val trackRepository: TrackRepository,
+    @ApplicationScope private val applicationScope: CoroutineScope,
 ) : ViewModel() {
 
     val state: StateFlow<TrackLoadState> = flow {
@@ -35,7 +39,8 @@ class PlayerViewModel @AssistedInject constructor(
     )
 
     fun onTrackPlayed(playedTrackId: Long) {
-        viewModelScope.launch {
+        applicationScope.launch {
+            delay(MARK_PLAYED_DELAY_MS)
             trackRepository.markPlayed(playedTrackId)
         }
     }
@@ -43,5 +48,9 @@ class PlayerViewModel @AssistedInject constructor(
     @AssistedFactory
     interface Factory {
         fun create(trackId: Long): PlayerViewModel
+    }
+
+    private companion object {
+        const val MARK_PLAYED_DELAY_MS = 1_000L
     }
 }
