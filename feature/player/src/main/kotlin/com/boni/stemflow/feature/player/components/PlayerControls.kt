@@ -15,12 +15,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.boni.stemflow.core.designsystem.R
+import com.boni.stemflow.core.designsystem.R as DesignR
 import com.boni.stemflow.core.designsystem.component.GlassIconButton
 import com.boni.stemflow.core.designsystem.modifier.bounceClickable
 import com.boni.stemflow.core.designsystem.theme.StemflowTheme
+import com.boni.stemflow.feature.player.R
 
 @Composable
 internal fun PlayerControls(
@@ -42,8 +44,8 @@ internal fun PlayerControls(
             contentAlignment = Alignment.Center,
         ) {
             Icon(
-                painter = painterResource(R.drawable.ic_backward),
-                contentDescription = "Previous",
+                painter = painterResource(DesignR.drawable.ic_backward),
+                contentDescription = stringResource(R.string.player_previous),
                 tint = MaterialTheme.colorScheme.onBackground,
                 modifier = Modifier.size(36.dp),
             )
@@ -51,9 +53,11 @@ internal fun PlayerControls(
         Spacer(Modifier.width(28.dp))
         GlassIconButton(
             icon = painterResource(
-                if (isPlaying) R.drawable.ic_pause else R.drawable.ic_play,
+                if (isPlaying) DesignR.drawable.ic_pause else DesignR.drawable.ic_play,
             ),
-            contentDescription = if (isPlaying) "Pause" else "Play",
+            contentDescription = stringResource(
+                if (isPlaying) R.string.player_pause else R.string.player_play,
+            ),
             onClick = onTogglePlayPause,
             size = 72.dp,
             containerColor = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.2f),
@@ -66,8 +70,8 @@ internal fun PlayerControls(
             contentAlignment = Alignment.Center,
         ) {
             Icon(
-                painter = painterResource(R.drawable.ic_forward),
-                contentDescription = "Next",
+                painter = painterResource(DesignR.drawable.ic_forward),
+                contentDescription = stringResource(R.string.player_next),
                 tint = MaterialTheme.colorScheme.onBackground,
                 modifier = Modifier.size(36.dp),
             )

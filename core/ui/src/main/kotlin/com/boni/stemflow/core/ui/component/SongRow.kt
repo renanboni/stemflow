@@ -14,6 +14,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -21,6 +22,7 @@ import androidx.compose.ui.unit.dp
 import com.boni.stemflow.core.designsystem.component.Thumbnail
 import com.boni.stemflow.core.designsystem.modifier.bounceClickable
 import com.boni.stemflow.core.designsystem.theme.StemflowTheme
+import com.boni.stemflow.core.ui.R
 
 @Composable
 fun SongRow(
@@ -69,7 +71,7 @@ fun SongRow(
         ) {
             Icon(
                 imageVector = Icons.Default.MoreVert,
-                contentDescription = "More options for $title",
+                contentDescription = stringResource(R.string.core_ui_more_options_for, title),
                 modifier = Modifier.size(20.dp),
                 tint = MaterialTheme.colorScheme.onSurface,
             )

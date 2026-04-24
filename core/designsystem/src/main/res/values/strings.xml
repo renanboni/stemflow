@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="designsystem_back">Back</string>
+    <string name="designsystem_search">Search</string>
+    <string name="designsystem_offline_cached_results">You\'re offline — showing cached results</string>
+</resources>

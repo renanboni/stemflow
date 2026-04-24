@@ -9,10 +9,12 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.boni.stemflow.core.designsystem.theme.StemflowTheme
+import com.boni.stemflow.core.ui.R
 
 @Composable
 fun AppendSpinner(modifier: Modifier = Modifier) {
@@ -29,7 +31,7 @@ fun AppendSpinner(modifier: Modifier = Modifier) {
 @Composable
 fun AppendError(modifier: Modifier = Modifier) {
     Text(
-        text = "Load error — pull to retry",
+        text = stringResource(R.string.core_ui_load_error_pull_to_retry),
         style = MaterialTheme.typography.bodyMedium,
         color = MaterialTheme.colorScheme.onSurfaceVariant,
         textAlign = TextAlign.Center,

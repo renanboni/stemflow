@@ -5,11 +5,13 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.retain.retain
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.media3.common.MediaItem
 import androidx.media3.common.PlaybackException
 import androidx.media3.common.Player
 import androidx.media3.exoplayer.ExoPlayer
 import com.boni.stemflow.core.domain.model.Track
+import com.boni.stemflow.feature.player.R
 import kotlinx.coroutines.delay
 
 /**
@@ -24,6 +26,8 @@ fun MediaPlayer(
     state: PlayerPlaybackState,
 ) {
     val applicationContext = LocalContext.current.applicationContext
+    val playbackErrorMessage = stringResource(R.string.player_error_playback)
+    val noPreviewMessage = stringResource(R.string.player_error_no_preview)
     val exoPlayer = retain { ExoPlayer.Builder(applicationContext).build() }
 
     DisposableEffect(exoPlayer) {
@@ -34,7 +38,7 @@ fun MediaPlayer(
             }
 
             override fun onPlayerError(error: PlaybackException) {
-                state.onError(error.message ?: "Playback error")
+                state.onError(error.message ?: playbackErrorMessage)
             }
         }
         exoPlayer.addListener(listener)
@@ -50,7 +54,7 @@ fun MediaPlayer(
         if (url.isNullOrBlank()) {
             exoPlayer.stop()
             exoPlayer.clearMediaItems()
-            if (track != null) state.onError("No preview URL")
+            if (track != null) state.onError(noPreviewMessage)
             return@LaunchedEffect
         }
         exoPlayer.setMediaItem(MediaItem.fromUri(url))

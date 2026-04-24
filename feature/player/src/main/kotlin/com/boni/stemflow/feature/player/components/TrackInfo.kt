@@ -15,11 +15,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.boni.stemflow.core.designsystem.R
+import com.boni.stemflow.core.designsystem.R as DesignR
 import com.boni.stemflow.core.designsystem.modifier.bounceClickable
 import com.boni.stemflow.core.designsystem.theme.StemflowTheme
+import com.boni.stemflow.feature.player.R
 
 @Composable
 internal fun TrackInfo(
@@ -50,8 +52,10 @@ internal fun TrackInfo(
                 modifier = Modifier.weight(1f, fill = false),
             )
             Icon(
-                painter = painterResource(R.drawable.ic_play_on_repeat),
-                contentDescription = if (isRepeating) "Disable repeat" else "Enable repeat",
+                painter = painterResource(DesignR.drawable.ic_play_on_repeat),
+                contentDescription = stringResource(
+                    if (isRepeating) R.string.player_repeat_disable else R.string.player_repeat_enable,
+                ),
                 tint = MaterialTheme.colorScheme.onBackground.copy(
                     alpha = if (isRepeating) 1f else 0.4f,
                 ),

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="player_previous">Previous</string>
+    <string name="player_next">Next</string>
+    <string name="player_play">Play</string>
+    <string name="player_pause">Pause</string>
+    <string name="player_more">More</string>
+    <string name="player_repeat_enable">Enable repeat</string>
+    <string name="player_repeat_disable">Disable repeat</string>
+    <string name="player_error_playback">Playback error</string>
+    <string name="player_error_no_preview">No preview URL</string>
+</resources>

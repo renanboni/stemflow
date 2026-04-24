@@ -31,8 +31,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.semantics.ProgressBarRangeInfo
+import androidx.compose.ui.semantics.progressBarRangeInfo
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.setProgress
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -131,6 +134,20 @@ private fun SeekBar(
         modifier = Modifier
             .fillMaxWidth()
             .height(24.dp)
+            .semantics {
+                if (enabled) {
+                    progressBarRangeInfo = ProgressBarRangeInfo(
+                        current = clamped,
+                        range = 0f..1f,
+                    )
+                    setProgress { target ->
+                        val fraction = target.coerceIn(0f, 1f)
+                        onSeekStart(fraction)
+                        onSeekCommit()
+                        true
+                    }
+                }
+            }
             .let { base ->
                 if (!enabled) base
                 else base.pointerInput(Unit) {

@@ -22,11 +22,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.boni.stemflow.core.designsystem.R
+import com.boni.stemflow.core.designsystem.R as DesignR
 import com.boni.stemflow.core.designsystem.component.Thumbnail
 import com.boni.stemflow.core.designsystem.theme.StemflowTheme
+import com.boni.stemflow.core.ui.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -70,8 +72,8 @@ fun TrackOptionsSheet(
                 }
             }
             SheetAction(
-                icon = painterResource(R.drawable.ic_setlist),
-                label = "View album",
+                icon = painterResource(DesignR.drawable.ic_setlist),
+                label = stringResource(R.string.core_ui_view_album),
                 onClick = onOpenAlbum,
             )
         }

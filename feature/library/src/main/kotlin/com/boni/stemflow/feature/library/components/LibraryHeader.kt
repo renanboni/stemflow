@@ -21,15 +21,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.layout
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.lerp
 import androidx.compose.ui.unit.sp
-import com.boni.stemflow.core.designsystem.R
+import com.boni.stemflow.core.designsystem.R as DesignR
 import com.boni.stemflow.core.designsystem.component.GlassIconButton
 import com.boni.stemflow.core.designsystem.component.SearchField
 import com.boni.stemflow.core.designsystem.theme.StemflowTheme
+import com.boni.stemflow.feature.library.R
 
 @Composable
 internal fun LibraryHeader(
@@ -71,8 +73,8 @@ private fun TitleRow(progress: Float, onSearchClick: () -> Unit) {
             .padding(vertical = 12.dp),
     ) {
         GlassIconButton(
-            icon = painterResource(R.drawable.ic_search),
-            contentDescription = "Search",
+            icon = painterResource(DesignR.drawable.ic_search),
+            contentDescription = stringResource(DesignR.string.designsystem_search),
             onClick = onSearchClick,
             modifier = Modifier
                 .align(BiasAlignment(horizontalBias = -1f, verticalBias = 0f))
@@ -85,7 +87,7 @@ private fun TitleRow(progress: Float, onSearchClick: () -> Unit) {
                 },
         )
         Text(
-            text = "Songs",
+            text = stringResource(R.string.library_title),
             fontSize = lerp(24.sp, 16.sp, progress),
             fontWeight = FontWeight.SemiBold,
             color = MaterialTheme.colorScheme.onSurface,
