@@ -37,9 +37,23 @@ fun PlayerScreen(
     onBack: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    PlayerScreen(
+        viewModel = viewModel,
+        playback = rememberPlayerPlaybackState(),
+        onBack = onBack,
+        modifier = modifier,
+    )
+}
+
+@Composable
+internal fun PlayerScreen(
+    viewModel: PlayerViewModel,
+    playback: PlayerPlaybackState,
+    onBack: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
     val trackState by viewModel.state.collectAsStateWithLifecycle()
     val track = (trackState as? TrackLoadState.Ready)?.track
-    val playback = rememberPlayerPlaybackState()
 
     LaunchedEffect(track?.trackId) {
         playback.onTrackLoaded(track)
@@ -48,40 +62,9 @@ fun PlayerScreen(
 
     MediaPlayer(
         track = track,
-        state = playback
+        state = playback,
     )
 
-    PlayerScreen(
-        trackState = trackState,
-        isPlaying = playback.isPlaying,
-        isRepeating = playback.repeatEnabled,
-        positionMs = playback.positionMs,
-        durationMs = playback.durationMs,
-        onBack = onBack,
-        onTogglePlayPause = playback::togglePlayPause,
-        onToggleRepeat = playback::toggleRepeat,
-        onSkipBackward = { playback.seekBy(-SKIP_INTERVAL_MS) },
-        onSkipForward = { playback.seekBy(SKIP_INTERVAL_MS) },
-        onSeek = playback::seekTo,
-        modifier = modifier,
-    )
-}
-
-@Composable
-internal fun PlayerScreen(
-    trackState: TrackLoadState,
-    isPlaying: Boolean,
-    isRepeating: Boolean,
-    positionMs: Long,
-    durationMs: Long,
-    onBack: () -> Unit,
-    onTogglePlayPause: () -> Unit,
-    onToggleRepeat: () -> Unit,
-    onSkipBackward: () -> Unit,
-    onSkipForward: () -> Unit,
-    onSeek: (Long) -> Unit,
-    modifier: Modifier = Modifier,
-) {
     Scaffold(
         modifier = modifier,
         containerColor = MaterialTheme.colorScheme.background,
@@ -98,20 +81,20 @@ internal fun PlayerScreen(
                 .fillMaxSize()
                 .padding(inner),
         ) {
-            when (trackState) {
+            when (val state = trackState) {
                 TrackLoadState.Loading -> LoadingState(Modifier.fillMaxSize())
-                is TrackLoadState.Error -> ErrorState(trackState.message, Modifier.fillMaxSize())
+                is TrackLoadState.Error -> ErrorState(state.message, Modifier.fillMaxSize())
                 is TrackLoadState.Ready -> PlayerBody(
-                    track = trackState.track,
-                    isPlaying = isPlaying,
-                    isRepeating = isRepeating,
-                    positionMs = positionMs,
-                    durationMs = durationMs,
-                    onTogglePlayPause = onTogglePlayPause,
-                    onToggleRepeat = onToggleRepeat,
-                    onSkipBackward = onSkipBackward,
-                    onSkipForward = onSkipForward,
-                    onSeek = onSeek,
+                    track = state.track,
+                    isPlaying = playback.isPlaying,
+                    isRepeating = playback.repeatEnabled,
+                    positionMs = playback.positionMs,
+                    durationMs = playback.durationMs,
+                    onTogglePlayPause = playback::togglePlayPause,
+                    onToggleRepeat = playback::toggleRepeat,
+                    onSkipBackward = { playback.seekBy(-SKIP_INTERVAL_MS) },
+                    onSkipForward = { playback.seekBy(SKIP_INTERVAL_MS) },
+                    onSeek = playback::seekTo,
                     modifier = Modifier.fillMaxSize(),
                 )
             }
@@ -193,58 +176,18 @@ private fun PlayerScreenReadyPreview() {
         trackViewUrl = null,
     )
     StemflowTheme {
-        PlayerScreen(
-            trackState = TrackLoadState.Ready(track),
+        PlayerBody(
+            track = track,
             isPlaying = true,
             isRepeating = false,
             positionMs = 86_000L,
             durationMs = 260_000L,
-            onBack = {},
             onTogglePlayPause = {},
             onToggleRepeat = {},
             onSkipBackward = {},
             onSkipForward = {},
             onSeek = {},
-        )
-    }
-}
-
-@Preview(widthDp = 414, heightDp = 896)
-@Composable
-private fun PlayerScreenLoadingPreview() {
-    StemflowTheme {
-        PlayerScreen(
-            trackState = TrackLoadState.Loading,
-            isPlaying = false,
-            isRepeating = false,
-            positionMs = 0L,
-            durationMs = 0L,
-            onBack = {},
-            onTogglePlayPause = {},
-            onToggleRepeat = {},
-            onSkipBackward = {},
-            onSkipForward = {},
-            onSeek = {},
-        )
-    }
-}
-
-@Preview(widthDp = 414, heightDp = 896)
-@Composable
-private fun PlayerScreenErrorPreview() {
-    StemflowTheme {
-        PlayerScreen(
-            trackState = TrackLoadState.Error("Track not found"),
-            isPlaying = false,
-            isRepeating = false,
-            positionMs = 0L,
-            durationMs = 0L,
-            onBack = {},
-            onTogglePlayPause = {},
-            onToggleRepeat = {},
-            onSkipBackward = {},
-            onSkipForward = {},
-            onSeek = {},
+            modifier = Modifier.fillMaxSize(),
         )
     }
 }
