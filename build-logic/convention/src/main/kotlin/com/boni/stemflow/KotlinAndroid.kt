@@ -34,5 +34,11 @@ private inline fun <reified T : Any> Project.configureKotlin() = extensions.conf
         else -> error("Unsupported Kotlin extension")
     }.apply {
         jvmTarget.set(JvmTarget.JVM_17)
+        freeCompilerArgs.addAll(
+            "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi",
+            "-opt-in=kotlinx.coroutines.FlowPreview",
+            "-opt-in=androidx.compose.material3.ExperimentalMaterial3Api",
+            "-opt-in=androidx.compose.animation.ExperimentalSharedTransitionApi",
+        )
     }
 }

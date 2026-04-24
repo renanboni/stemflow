@@ -1,6 +1,5 @@
 package com.boni.stemflow
 
-import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -20,7 +19,6 @@ import com.boni.stemflow.feature.player.PlayerScreen
 import com.boni.stemflow.feature.player.PlayerViewModel
 import com.boni.stemflow.feature.player.navigation.PlayerRoute
 
-@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 fun MainNavigation() {
     val backStack = rememberNavBackStack(LibraryRoute)

@@ -9,7 +9,6 @@ import com.boni.stemflow.core.domain.repository.SearchRepository
 import com.boni.stemflow.core.domain.repository.TrackRepository
 import com.boni.stemflow.core.testing.coroutines.MainDispatcherRule
 import com.boni.stemflow.core.testing.fixtures.TrackFixtures
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flowOf
@@ -21,7 +20,6 @@ import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
 
-@OptIn(ExperimentalCoroutinesApi::class)
 class LibraryViewModelTest {
 
     @get:Rule

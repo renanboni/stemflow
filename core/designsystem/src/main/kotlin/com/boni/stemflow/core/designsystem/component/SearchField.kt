@@ -3,7 +3,6 @@ package com.boni.stemflow.core.designsystem.component
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -21,7 +20,6 @@ import androidx.compose.ui.unit.dp
 import com.boni.stemflow.core.designsystem.R
 import com.boni.stemflow.core.designsystem.theme.StemflowTheme
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchField(
     query: String,
