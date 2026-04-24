@@ -1,90 +1,133 @@
 package com.boni.stemflow.feature.player
 
+import android.content.ComponentName
+import android.content.Context
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.retain.retain
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.core.content.ContextCompat
+import androidx.core.net.toUri
 import androidx.media3.common.MediaItem
+import androidx.media3.common.MediaMetadata
 import androidx.media3.common.PlaybackException
 import androidx.media3.common.Player
-import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.session.MediaController
+import androidx.media3.session.SessionToken
 import com.boni.stemflow.core.domain.model.Track
-import com.boni.stemflow.feature.player.R
+import com.boni.stemflow.feature.player.service.PlaybackService
 import kotlinx.coroutines.delay
 
-/**
- * Composable that owns an [ExoPlayer] tied to its composition. Drive playback declaratively by
- * mutating [state] (via the [PlayerPlaybackState] intents or by setting fields from the caller's
- * UI); this composable writes observed transport events back into the same holder. Player stops
- * and releases when this composable leaves composition.
- */
 @Composable
 fun MediaPlayer(
     track: Track?,
     state: PlayerPlaybackState,
 ) {
-    val applicationContext = LocalContext.current.applicationContext
+    val context = LocalContext.current.applicationContext
     val playbackErrorMessage = stringResource(R.string.player_error_playback)
     val noPreviewMessage = stringResource(R.string.player_error_no_preview)
-    val exoPlayer = retain { ExoPlayer.Builder(applicationContext).build() }
 
-    DisposableEffect(exoPlayer) {
+    val controller = rememberMediaController(context) ?: return
+
+    DisposableEffect(controller) {
         val listener = object : Player.Listener {
             override fun onPlaybackStateChanged(playbackState: Int) {
                 state.onBufferingChanged(playbackState == Player.STATE_BUFFERING)
-                state.onDurationChanged(exoPlayer.duration.coerceAtLeast(0L))
+                state.onDurationChanged(controller.duration.coerceAtLeast(0L))
             }
 
             override fun onPlayerError(error: PlaybackException) {
                 state.onError(error.message ?: playbackErrorMessage)
             }
         }
-        exoPlayer.addListener(listener)
-        onDispose {
-            exoPlayer.removeListener(listener)
-            runCatching { exoPlayer.stop() }
-            runCatching { exoPlayer.release() }
-        }
+        controller.addListener(listener)
+        onDispose { controller.removeListener(listener) }
     }
 
-    LaunchedEffect(track?.trackId) {
+    LaunchedEffect(controller, track?.trackId) {
         val url = track?.previewUrl
         if (url.isNullOrBlank()) {
-            exoPlayer.stop()
-            exoPlayer.clearMediaItems()
+            controller.stop()
+            controller.clearMediaItems()
             if (track != null) state.onError(noPreviewMessage)
             return@LaunchedEffect
         }
-        exoPlayer.setMediaItem(MediaItem.fromUri(url))
-        exoPlayer.prepare()
+        controller.setMediaItem(track.toMediaItem(url))
+        controller.prepare()
     }
 
-    LaunchedEffect(state.isPlaying) {
-        exoPlayer.playWhenReady = state.isPlaying
+    LaunchedEffect(controller, state.isPlaying) {
+        controller.playWhenReady = state.isPlaying
     }
 
-    LaunchedEffect(state.repeatEnabled) {
-        exoPlayer.repeatMode = if (state.repeatEnabled) {
+    LaunchedEffect(controller, state.repeatEnabled) {
+        controller.repeatMode = if (state.repeatEnabled) {
             Player.REPEAT_MODE_ONE
         } else {
             Player.REPEAT_MODE_OFF
         }
     }
 
-    LaunchedEffect(state.seekTarget) {
+    LaunchedEffect(controller, state.seekTarget) {
         val target = state.seekTarget ?: return@LaunchedEffect
-        exoPlayer.seekTo(target)
+        controller.seekTo(target)
         state.consumeSeek()
     }
 
-    LaunchedEffect(exoPlayer) {
+    LaunchedEffect(controller) {
         while (true) {
-            state.onPositionChanged(exoPlayer.currentPosition)
+            state.onPositionChanged(controller.currentPosition)
             delay(POSITION_TICK_MS)
         }
     }
+}
+
+@Composable
+private fun rememberMediaController(context: Context): MediaController? {
+    var controller by remember { mutableStateOf<MediaController?>(null) }
+
+    DisposableEffect(Unit) {
+        val token = SessionToken(
+            context,
+            ComponentName(context, PlaybackService::class.java),
+        )
+        val future = MediaController.Builder(context, token).buildAsync()
+        future.addListener(
+            {
+                if (!future.isCancelled) {
+                    controller = runCatching { future.get() }.getOrNull()
+                }
+            },
+            ContextCompat.getMainExecutor(context),
+        )
+        onDispose {
+            controller?.release()
+            controller = null
+            MediaController.releaseFuture(future)
+        }
+    }
+
+    return controller
+}
+
+private fun Track.toMediaItem(url: String): MediaItem {
+    val metadataBuilder = MediaMetadata.Builder()
+        .setTitle(name)
+        .setArtist(artistName)
+        .setAlbumTitle(collectionName)
+    val artUri = (artworkUrl600 ?: artworkUrl100)?.takeIf { it.isNotBlank() }?.toUri()
+    if (artUri != null) metadataBuilder.setArtworkUri(artUri)
+
+    return MediaItem.Builder()
+        .setUri(url)
+        .setMediaId(trackId.toString())
+        .setMediaMetadata(metadataBuilder.build())
+        .build()
 }
 
 private const val POSITION_TICK_MS = 500L
