@@ -33,9 +33,6 @@ class PlayerPlaybackState {
     var repeatEnabled by mutableStateOf(false)
         private set
 
-    var amplitude by mutableStateOf(0f)
-        private set
-
     fun onTrackLoaded(track: Track?) {
         positionMs = 0L
         durationMs = track?.trackTimeMillis ?: 0L
@@ -43,7 +40,6 @@ class PlayerPlaybackState {
         seekTarget = null
         isBuffering = false
         error = null
-        amplitude = 0f
     }
 
     fun onIsPlayingChanged(value: Boolean) {
@@ -64,10 +60,6 @@ class PlayerPlaybackState {
 
     fun onError(message: String?) {
         error = message
-    }
-
-    fun onAmplitudeChanged(value: Float) {
-        amplitude = value
     }
 
     fun consumeSeek() {
