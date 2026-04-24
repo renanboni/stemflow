@@ -1,6 +1,9 @@
 package com.boni.stemflow.feature.library.components
 
 import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.spring
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -12,6 +15,7 @@ import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.BiasAlignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
@@ -35,7 +39,15 @@ internal fun LibraryHeader(
     onSearchClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val eased = FastOutSlowInEasing.transform(collapseProgress.coerceIn(0f, 1f))
+    val progress by animateFloatAsState(
+        targetValue = collapseProgress.coerceIn(0f, 1f),
+        animationSpec = spring(
+            dampingRatio = Spring.DampingRatioNoBouncy,
+            stiffness = Spring.StiffnessMedium,
+        ),
+        label = "libraryHeaderCollapse",
+    )
+    val eased = FastOutSlowInEasing.transform(progress)
 
     Column(
         modifier = modifier
