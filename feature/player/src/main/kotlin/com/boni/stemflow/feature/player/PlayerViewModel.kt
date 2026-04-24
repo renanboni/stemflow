@@ -16,6 +16,7 @@ import kotlinx.coroutines.flow.WhileSubscribed
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.seconds
 
 @HiltViewModel(assistedFactory = PlayerViewModel.Factory::class)
@@ -40,7 +41,7 @@ class PlayerViewModel @AssistedInject constructor(
 
     fun onTrackPlayed(playedTrackId: Long) {
         applicationScope.launch {
-            delay(MARK_PLAYED_DELAY_MS)
+            delay(500.milliseconds)
             trackRepository.markPlayed(playedTrackId)
         }
     }
@@ -48,9 +49,5 @@ class PlayerViewModel @AssistedInject constructor(
     @AssistedFactory
     interface Factory {
         fun create(trackId: Long): PlayerViewModel
-    }
-
-    private companion object {
-        const val MARK_PLAYED_DELAY_MS = 1_000L
     }
 }

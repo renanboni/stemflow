@@ -112,6 +112,7 @@ internal fun LibraryScreen(
                             onClick = { onTrackClick(track.trackId) },
                             onMoreClick = { selectedTrack = track },
                             sharedKey = "artwork-${track.trackId}",
+                            modifier = Modifier.animateItem(),
                         )
                     }
                 }
