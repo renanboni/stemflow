@@ -1,7 +1,6 @@
 package com.boni.stemflow.core.designsystem.component
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
@@ -19,11 +18,11 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.rotate
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.boni.stemflow.core.designsystem.R
+import com.boni.stemflow.core.designsystem.modifier.bounceClickable
 import com.boni.stemflow.core.designsystem.theme.StemflowTheme
 
 @Composable
@@ -39,6 +38,7 @@ fun GlassIconButton(
 
     Box(
         modifier = modifier
+            .bounceClickable(onClick = onClick)
             .size(size)
             .clip(CircleShape)
             .background(containerColor)
@@ -59,8 +59,7 @@ fun GlassIconButton(
                         style = Stroke(width = strokePx),
                     )
                 }
-            }
-            .clickable(role = Role.Button, onClick = onClick),
+            },
         contentAlignment = Alignment.Center,
     ) {
         Icon(

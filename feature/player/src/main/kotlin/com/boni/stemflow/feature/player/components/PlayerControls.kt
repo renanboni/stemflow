@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -20,6 +19,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.boni.stemflow.core.designsystem.R
 import com.boni.stemflow.core.designsystem.component.GlassIconButton
+import com.boni.stemflow.core.designsystem.modifier.bounceClickable
 import com.boni.stemflow.core.designsystem.theme.StemflowTheme
 
 @Composable
@@ -35,7 +35,12 @@ internal fun PlayerControls(
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        IconButton(onClick = onSkipBackward) {
+        Box(
+            modifier = Modifier
+                .size(48.dp)
+                .bounceClickable(onClick = onSkipBackward),
+            contentAlignment = Alignment.Center,
+        ) {
             Icon(
                 painter = painterResource(R.drawable.ic_backward),
                 contentDescription = "Previous",
@@ -54,7 +59,12 @@ internal fun PlayerControls(
             containerColor = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.2f),
         )
         Spacer(Modifier.width(28.dp))
-        IconButton(onClick = onSkipForward) {
+        Box(
+            modifier = Modifier
+                .size(48.dp)
+                .bounceClickable(onClick = onSkipForward),
+            contentAlignment = Alignment.Center,
+        ) {
             Icon(
                 painter = painterResource(R.drawable.ic_forward),
                 contentDescription = "Next",
