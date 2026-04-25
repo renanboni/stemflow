@@ -17,7 +17,7 @@ class FakeNetworkDataSource : NetworkDataSource {
         return searchPages[term to page] ?: emptyList()
     }
 
-    override suspend fun lookupAlbum(collectionId: Long): Album {
+    override suspend fun getAlbum(collectionId: Long): Album {
         throwOnNext?.let { throwOnNext = null; throw it }
         return lookupAlbums[collectionId]
             ?: throw IOException("no fake album fixture for $collectionId")

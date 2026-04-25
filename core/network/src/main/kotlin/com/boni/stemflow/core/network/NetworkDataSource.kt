@@ -5,6 +5,6 @@ import com.boni.stemflow.core.domain.model.Track
 
 interface NetworkDataSource {
     suspend fun search(term: String, limit: Int, offset: Int): List<Track>
-    suspend fun lookupAlbum(collectionId: Long): Album
+    suspend fun getAlbum(collectionId: Long): Album
     suspend fun getTrack(trackId: Long): Track?
 }

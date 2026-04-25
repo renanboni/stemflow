@@ -19,7 +19,7 @@ class ITunesNetworkDataSource @Inject constructor(
             .results
             .mapNotNull { it.toDomainOrNull() }
 
-    override suspend fun lookupAlbum(collectionId: Long): Album =
+    override suspend fun getAlbum(collectionId: Long): Album =
         api.lookup(id = collectionId).toAlbumOrNull()
             ?: throw IOException("Album not found or empty response: $collectionId")
 

@@ -38,7 +38,7 @@ class DefaultAlbumRepository @Inject constructor(
     }
 
     override suspend fun refreshAlbum(collectionId: Long): Result<Unit> = runCatching {
-        val album = network.lookupAlbum(collectionId)
+        val album = network.getAlbum(collectionId)
         db.withTransaction {
             albumDao.upsert(album.toEntity())
             trackDao.upsertAll(album.tracks.map { it.toEntity() })
