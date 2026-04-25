@@ -8,6 +8,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.retain.retain
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -89,7 +90,7 @@ fun MediaPlayer(
 
 @Composable
 private fun rememberMediaController(context: Context): MediaController? {
-    var controller by remember { mutableStateOf<MediaController?>(null) }
+    var controller by retain { mutableStateOf<MediaController?>(null) }
 
     DisposableEffect(Unit) {
         val token = SessionToken(

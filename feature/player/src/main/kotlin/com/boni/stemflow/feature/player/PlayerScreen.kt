@@ -22,7 +22,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.boni.stemflow.core.designsystem.component.ArtworkImage
 import com.boni.stemflow.core.designsystem.component.ErrorState
-import com.boni.stemflow.core.designsystem.component.LoadingState
+import com.boni.stemflow.core.designsystem.component.Loading
 import com.boni.stemflow.core.designsystem.theme.StemflowTheme
 import com.boni.stemflow.core.domain.model.Track
 import com.boni.stemflow.feature.player.components.PlaybackTime
@@ -89,7 +89,7 @@ internal fun PlayerScreen(
                 .padding(inner),
         ) {
             when (val state = trackState) {
-                TrackLoadState.Loading -> LoadingState(Modifier.fillMaxSize())
+                TrackLoadState.Loading -> Loading(Modifier.fillMaxSize())
                 is TrackLoadState.Error -> ErrorState(state.message, Modifier.fillMaxSize())
                 is TrackLoadState.Ready -> PlayerBody(
                     track = state.track,

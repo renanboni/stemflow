@@ -31,7 +31,7 @@ import com.boni.stemflow.core.designsystem.R as DesignR
 import com.boni.stemflow.core.designsystem.component.ArtworkImage
 import com.boni.stemflow.core.designsystem.component.ErrorState
 import com.boni.stemflow.core.designsystem.component.GlassIconButton
-import com.boni.stemflow.core.designsystem.component.LoadingState
+import com.boni.stemflow.core.designsystem.component.Loading
 import com.boni.stemflow.core.designsystem.modifier.fadingEdges
 import com.boni.stemflow.core.designsystem.theme.StemflowTheme
 import com.boni.stemflow.core.designsystem.theme.cover
@@ -89,7 +89,7 @@ internal fun AlbumScreen(
                 .padding(inner),
         ) {
             when (state) {
-                AlbumLoadState.Loading -> LoadingState(Modifier.fillMaxSize())
+                AlbumLoadState.Loading -> Loading(Modifier.fillMaxSize())
                 is AlbumLoadState.Error -> ErrorState(state.message, Modifier.fillMaxSize())
                 is AlbumLoadState.Ready -> AlbumBody(
                     album = state.album,
