@@ -2,6 +2,7 @@ package com.boni.stemflow.feature.album
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.boni.stemflow.core.domain.model.Album
 import com.boni.stemflow.core.domain.repository.AlbumRepository
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
@@ -9,6 +10,7 @@ import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 
@@ -24,6 +26,7 @@ class AlbumViewModel @AssistedInject constructor(
             if (album == null) AlbumLoadState.Loading
             else AlbumLoadState.Ready(album)
         }
+        .catch { emit(AlbumLoadState.Error(it.message ?: "Couldn't load album")) }
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5_000L),

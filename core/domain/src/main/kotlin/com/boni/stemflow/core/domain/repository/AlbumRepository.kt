@@ -5,5 +5,5 @@ import kotlinx.coroutines.flow.Flow
 
 interface AlbumRepository {
     fun getAlbum(collectionId: Long): Flow<Album?>
-    suspend fun refreshAlbum(collectionId: Long): Result<Unit>
+    suspend fun refreshAlbum(collectionId: Long)
 }

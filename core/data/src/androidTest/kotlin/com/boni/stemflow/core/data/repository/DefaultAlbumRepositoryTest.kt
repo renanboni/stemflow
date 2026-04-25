@@ -7,10 +7,11 @@ import app.cash.turbine.test
 import com.boni.stemflow.core.database.StemflowDatabase
 import com.boni.stemflow.core.testing.fakes.FakeNetworkDataSource
 import com.boni.stemflow.core.testing.fixtures.TrackFixtures
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
 import org.junit.After
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertTrue
+import org.junit.Assert.assertThrows
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -63,9 +64,10 @@ class DefaultAlbumRepositoryTest {
     }
 
     @Test
-    fun refreshAlbum_returnsFailure_whenNetworkThrows() = runTest {
+    fun refreshAlbum_throws_whenNetworkFails() {
         fakeNetwork.throwOnNext = IOException("down")
-        val result = repo.refreshAlbum(999L)
-        assertTrue(result.isFailure)
+        assertThrows(IOException::class.java) {
+            runBlocking { repo.refreshAlbum(999L) }
+        }
     }
 }
