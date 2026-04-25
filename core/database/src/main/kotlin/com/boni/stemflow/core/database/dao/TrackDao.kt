@@ -1,16 +1,15 @@
 package com.boni.stemflow.core.database.dao
 
 import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Upsert
 import com.boni.stemflow.core.database.entity.TrackEntity
 import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface TrackDao {
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Upsert
     suspend fun upsertAll(tracks: List<TrackEntity>)
 
     @Query("SELECT * FROM tracks WHERE trackId = :trackId")
