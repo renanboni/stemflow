@@ -1,5 +1,6 @@
 package com.boni.stemflow.core.designsystem.component
 
+import androidx.compose.animation.core.animate
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
@@ -24,6 +25,12 @@ class CollapsibleHeaderState internal constructor(
 
     val progress: Float
         get() = (collapsedPx / thresholdPx).coerceIn(0f, 1f)
+
+    suspend fun expand() {
+        animate(initialValue = collapsedPx, targetValue = 0f) { value, _ ->
+            collapsedPx = value
+        }
+    }
 
     val nestedScrollConnection: NestedScrollConnection = object : NestedScrollConnection {
         override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {

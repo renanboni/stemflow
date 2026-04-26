@@ -18,6 +18,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.BiasAlignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.layout
 import androidx.compose.ui.res.painterResource
@@ -40,6 +41,7 @@ internal fun LibraryHeader(
     collapseProgress: Float,
     onSearchClick: () -> Unit,
     modifier: Modifier = Modifier,
+    searchFocusRequester: FocusRequester? = null,
 ) {
     val progress by animateFloatAsState(
         targetValue = collapseProgress.coerceIn(0f, 1f),
@@ -61,6 +63,7 @@ internal fun LibraryHeader(
             query = query,
             onQueryChange = onQueryChange,
             progress = eased,
+            focusRequester = searchFocusRequester,
         )
     }
 }
@@ -103,6 +106,7 @@ private fun CollapsibleSearchField(
     query: String,
     onQueryChange: (String) -> Unit,
     progress: Float,
+    focusRequester: FocusRequester? = null,
 ) {
     Box(
         modifier = Modifier
@@ -115,7 +119,11 @@ private fun CollapsibleSearchField(
                 }
             },
     ) {
-        SearchField(query = query, onQueryChange = onQueryChange)
+        SearchField(
+            query = query,
+            onQueryChange = onQueryChange,
+            focusRequester = focusRequester,
+        )
     }
 }
 

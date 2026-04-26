@@ -16,6 +16,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -69,6 +70,7 @@ internal fun LibraryScreen(
     var selectedTrack by remember { mutableStateOf<Track?>(null) }
     val headerState = rememberCollapsibleHeaderState()
     val scope = rememberCoroutineScope()
+    val searchFocusRequester = remember { FocusRequester() }
 
     Scaffold(
         topBar = {
@@ -77,8 +79,12 @@ internal fun LibraryScreen(
                 onQueryChange = onQueryChange,
                 collapseProgress = headerState.progress,
                 onSearchClick = {
-                    scope.launch { headerState.listState.animateScrollToItem(0) }
+                    scope.launch {
+                        headerState.expand()
+                        searchFocusRequester.requestFocus()
+                    }
                 },
+                searchFocusRequester = searchFocusRequester,
             )
         },
         modifier = modifier,
