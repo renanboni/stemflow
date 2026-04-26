@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
@@ -91,41 +92,18 @@ internal fun LibraryScreen(
                 .fadingEdges(),
         ) {
             if (uiState.query.isBlank()) {
-                items(uiState.recentlyPlayed, key = { "recent-${it.trackId}" }) { track ->
-                    SongRow(
-                        title = track.name,
-                        artist = track.artistName,
-                        artworkUrl = track.artworkUrl100,
-                        onClick = { onTrackClick(track.trackId) },
-                        onMoreClick = { selectedTrack = track },
-                        sharedKey = "artwork-${track.trackId}",
-                        modifier = Modifier.animateItem(),
-                    )
-                }
+                recentlyPlayedTracks(
+                    tracks = uiState.recentlyPlayed,
+                    onTrackClick = onTrackClick,
+                    onMoreClick = { selectedTrack = it },
+                )
             }
-            items(
-                count = pagedItems.itemCount,
-                key = pagedItems.itemKey { "search-${it.trackId}" },
-            ) { idx ->
-                val track = pagedItems[idx]
-                if (track == null) {
-                    Spacer(modifier = Modifier.fillMaxWidth().height(72.dp))
-                } else {
-                    SongRow(
-                        title = track.name,
-                        artist = track.artistName,
-                        artworkUrl = track.artworkUrl100,
-                        onClick = { onTrackClick(track.trackId) },
-                        onMoreClick = { selectedTrack = track },
-                        sharedKey = "artwork-${track.trackId}",
-                    )
-                }
-            }
-            when (pagedItems.loadState.append) {
-                is LoadState.Loading -> item { AppendSpinner() }
-                is LoadState.Error -> item { AppendError() }
-                else -> Unit
-            }
+            searchResultTracks(
+                pagedItems = pagedItems,
+                onTrackClick = onTrackClick,
+                onMoreClick = { selectedTrack = it },
+            )
+            appendLoadState(pagedItems.loadState.append)
         }
     }
 
@@ -139,6 +117,57 @@ internal fun LibraryScreen(
             },
             onDismiss = { selectedTrack = null },
         )
+    }
+}
+
+private fun LazyListScope.recentlyPlayedTracks(
+    tracks: List<Track>,
+    onTrackClick: (Long) -> Unit,
+    onMoreClick: (Track) -> Unit,
+) {
+    items(tracks, key = { "recent-${it.trackId}" }) { track ->
+        SongRow(
+            title = track.name,
+            artist = track.artistName,
+            artworkUrl = track.artworkUrl100,
+            onClick = { onTrackClick(track.trackId) },
+            onMoreClick = { onMoreClick(track) },
+            sharedKey = "artwork-${track.trackId}",
+            modifier = Modifier.animateItem(),
+        )
+    }
+}
+
+private fun LazyListScope.searchResultTracks(
+    pagedItems: LazyPagingItems<Track>,
+    onTrackClick: (Long) -> Unit,
+    onMoreClick: (Track) -> Unit,
+) {
+    items(
+        count = pagedItems.itemCount,
+        key = pagedItems.itemKey { "search-${it.trackId}" },
+    ) { idx ->
+        val track = pagedItems[idx]
+        if (track == null) {
+            Spacer(modifier = Modifier.fillMaxWidth().height(72.dp))
+        } else {
+            SongRow(
+                title = track.name,
+                artist = track.artistName,
+                artworkUrl = track.artworkUrl100,
+                onClick = { onTrackClick(track.trackId) },
+                onMoreClick = { onMoreClick(track) },
+                sharedKey = "artwork-${track.trackId}",
+            )
+        }
+    }
+}
+
+private fun LazyListScope.appendLoadState(append: LoadState) {
+    when (append) {
+        is LoadState.Loading -> item { AppendSpinner() }
+        is LoadState.Error -> item { AppendError() }
+        else -> Unit
     }
 }
 
