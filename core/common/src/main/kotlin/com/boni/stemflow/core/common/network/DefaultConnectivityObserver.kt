@@ -17,8 +17,8 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 
 class DefaultConnectivityObserver @Inject constructor(
-    @ApplicationContext private val context: Context,
-    @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
+    @param:ApplicationContext private val context: Context,
+    @param:IoDispatcher private val ioDispatcher: CoroutineDispatcher,
 ) : ConnectivityObserver {
 
     override val state: Flow<ConnectivityState> = callbackFlow {
