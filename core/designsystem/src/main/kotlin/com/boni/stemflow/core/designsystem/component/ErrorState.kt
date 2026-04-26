@@ -20,6 +20,7 @@ import androidx.compose.material.icons.outlined.MusicOff
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -27,14 +28,20 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.boni.stemflow.core.designsystem.R
 import com.boni.stemflow.core.designsystem.theme.StemflowTheme
 import com.boni.stemflow.core.designsystem.theme.textTertiary
 
 @Composable
-fun ErrorState(message: String, modifier: Modifier = Modifier) {
+fun ErrorState(
+    message: String,
+    modifier: Modifier = Modifier,
+    onRetry: (() -> Unit)? = null,
+) {
     val haloColor = MaterialTheme.colorScheme.surfaceVariant
     val pulse = rememberInfiniteTransition(label = "errorHalo")
     val scale by pulse.animateFloat(
@@ -83,6 +90,12 @@ fun ErrorState(message: String, modifier: Modifier = Modifier) {
             color = MaterialTheme.colorScheme.onBackground,
             textAlign = TextAlign.Center,
         )
+        if (onRetry != null) {
+            Spacer(Modifier.height(24.dp))
+            TextButton(onClick = onRetry) {
+                Text(text = stringResource(R.string.designsystem_retry))
+            }
+        }
     }
 }
 

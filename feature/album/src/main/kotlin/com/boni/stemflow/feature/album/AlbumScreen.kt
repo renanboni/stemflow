@@ -52,6 +52,7 @@ fun AlbumScreen(
         state = state,
         onBack = onBack,
         onTrackClick = onTrackClick,
+        onRetry = viewModel::retry,
         modifier = modifier,
     )
 }
@@ -61,6 +62,7 @@ internal fun AlbumScreen(
     state: AlbumLoadState,
     onBack: () -> Unit,
     onTrackClick: (Long) -> Unit,
+    onRetry: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Scaffold(
@@ -90,7 +92,11 @@ internal fun AlbumScreen(
         ) {
             when (state) {
                 AlbumLoadState.Loading -> Loading(Modifier.fillMaxSize())
-                is AlbumLoadState.Error -> ErrorState(state.message, Modifier.fillMaxSize())
+                is AlbumLoadState.Error -> ErrorState(
+                    message = state.message,
+                    modifier = Modifier.fillMaxSize(),
+                    onRetry = onRetry,
+                )
                 is AlbumLoadState.Ready -> AlbumBody(
                     album = state.album,
                     onTrackClick = onTrackClick,
@@ -208,6 +214,7 @@ private fun AlbumScreenReadyPreview() {
             state = AlbumLoadState.Ready(album),
             onBack = {},
             onTrackClick = {},
+            onRetry = {},
         )
     }
 }
@@ -220,6 +227,7 @@ private fun AlbumScreenLoadingPreview() {
             state = AlbumLoadState.Loading,
             onBack = {},
             onTrackClick = {},
+            onRetry = {},
         )
     }
 }
