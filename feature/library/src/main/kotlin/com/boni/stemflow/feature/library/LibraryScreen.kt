@@ -137,7 +137,6 @@ internal fun LibraryScreen(
         TrackOptionsSheet(
             title = track.name,
             artist = track.artistName,
-            artworkUrl = track.artworkUrl100,
             onOpenAlbum = {
                 onOpenAlbum(track.collectionId)
                 selectedTrack = null
