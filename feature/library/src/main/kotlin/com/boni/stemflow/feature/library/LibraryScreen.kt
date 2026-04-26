@@ -25,7 +25,6 @@ import androidx.paging.PagingData
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemKey
-import com.boni.stemflow.core.designsystem.component.OfflineBanner
 import com.boni.stemflow.core.designsystem.component.rememberCollapsibleHeaderState
 import com.boni.stemflow.core.designsystem.modifier.fadingEdges
 import com.boni.stemflow.core.designsystem.theme.StemflowTheme
@@ -91,9 +90,6 @@ internal fun LibraryScreen(
                 .nestedScroll(headerState.nestedScrollConnection)
                 .fadingEdges(),
         ) {
-            if (uiState.isOffline) {
-                item { OfflineBanner() }
-            }
             if (uiState.query.isBlank()) {
                 items(uiState.recentlyPlayed, key = { "recent-${it.trackId}" }) { track ->
                     SongRow(

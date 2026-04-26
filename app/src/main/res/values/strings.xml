@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">stemflow</string>
+    <string name="offline_snackbar">You\'re offline</string>
 </resources>

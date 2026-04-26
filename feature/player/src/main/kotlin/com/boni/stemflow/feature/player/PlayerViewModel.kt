@@ -21,9 +21,9 @@ import kotlin.time.Duration.Companion.seconds
 
 @HiltViewModel(assistedFactory = PlayerViewModel.Factory::class)
 class PlayerViewModel @AssistedInject constructor(
-    @Assisted private val trackId: Long,
+    @param:Assisted private val trackId: Long,
     private val trackRepository: TrackRepository,
-    @ApplicationScope private val applicationScope: CoroutineScope,
+    @param:ApplicationScope private val applicationScope: CoroutineScope,
 ) : ViewModel() {
 
     val state: StateFlow<TrackLoadState> = flow {
