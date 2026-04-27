@@ -4,7 +4,7 @@ import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import app.cash.turbine.test
-import com.boni.stemflow.core.data.local.LocalITunesLocalDataSource
+import com.boni.stemflow.core.data.local.DefaultITunesLocalDataSource
 import com.boni.stemflow.core.database.StemflowDatabase
 import com.boni.stemflow.core.testing.fakes.FakeITunesRemoteDataSource
 import com.boni.stemflow.core.testing.fixtures.TrackFixtures
@@ -23,7 +23,7 @@ class DefaultAlbumRepositoryTest {
 
     private lateinit var db: StemflowDatabase
     private lateinit var fakeNetwork: FakeITunesRemoteDataSource
-    private lateinit var local: LocalITunesLocalDataSource
+    private lateinit var local: DefaultITunesLocalDataSource
     private lateinit var repo: DefaultAlbumRepository
 
     @Before
@@ -33,7 +33,7 @@ class DefaultAlbumRepositoryTest {
             StemflowDatabase::class.java,
         ).allowMainThreadQueries().build()
         fakeNetwork = FakeITunesRemoteDataSource()
-        local = LocalITunesLocalDataSource(
+        local = DefaultITunesLocalDataSource(
             albumDao = db.albumDao(),
             trackDao = db.trackDao(),
             recentlyPlayedDao = db.recentlyPlayedDao(),

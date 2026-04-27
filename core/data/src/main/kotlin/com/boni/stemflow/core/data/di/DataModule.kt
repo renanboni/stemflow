@@ -1,7 +1,7 @@
 package com.boni.stemflow.core.data.di
 
 import com.boni.stemflow.core.data.local.ITunesLocalDataSource
-import com.boni.stemflow.core.data.local.LocalITunesLocalDataSource
+import com.boni.stemflow.core.data.local.DefaultITunesLocalDataSource
 import com.boni.stemflow.core.data.repository.DefaultAlbumRepository
 import com.boni.stemflow.core.data.repository.DefaultSearchRepository
 import com.boni.stemflow.core.data.repository.DefaultTrackRepository
@@ -20,7 +20,7 @@ abstract class DataModule {
 
     @Binds
     @Singleton
-    abstract fun bindITunesLocalDataSource(impl: LocalITunesLocalDataSource): ITunesLocalDataSource
+    abstract fun bindITunesLocalDataSource(impl: DefaultITunesLocalDataSource): ITunesLocalDataSource
 
     @Binds
     @Singleton

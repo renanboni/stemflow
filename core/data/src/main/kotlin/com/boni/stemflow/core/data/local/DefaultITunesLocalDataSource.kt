@@ -16,7 +16,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 
 @Singleton
-class LocalITunesLocalDataSource @Inject constructor(
+class DefaultITunesLocalDataSource @Inject constructor(
     private val albumDao: AlbumDao,
     private val trackDao: TrackDao,
     private val recentlyPlayedDao: RecentlyPlayedDao,
