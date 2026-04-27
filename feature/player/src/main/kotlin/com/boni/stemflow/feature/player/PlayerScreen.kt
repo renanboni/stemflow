@@ -13,13 +13,13 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -43,30 +43,29 @@ fun PlayerScreen(
     onOpenAlbum: (Long) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    PlayerScreen(
-        viewModel = viewModel,
-        playback = rememberPlayerPlaybackState(),
-        onBack = onBack,
-        onOpenAlbum = onOpenAlbum,
-        modifier = modifier,
-    )
-}
-
-@Composable
-internal fun PlayerScreen(
-    viewModel: PlayerViewModel,
-    playback: PlayerPlaybackState,
-    onBack: () -> Unit,
-    onOpenAlbum: (Long) -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    val trackState by viewModel.state.collectAsStateWithLifecycle()
-    val track = (trackState as? TrackLoadState.Ready)?.track
-    var showTrackOptions by remember { mutableStateOf(false) }
-
-    LaunchedEffect(track?.trackId) {
-        playback.onTrackLoaded(track)
+    val uiState by viewModel.state.collectAsStateWithLifecycle()
+    val readyState = uiState as? PlayerUiState.Ready
+    val track = readyState?.track
+    val playback = readyState?.playback
+    val playbackController = rememberPlayerPlaybackController()
+    val noPreviewMessage = stringResource(R.string.player_error_no_preview)
+    val errorMessage = when (val state = uiState) {
+        PlayerUiState.Loading -> null
+        is PlayerUiState.Error -> state.message
+        is PlayerUiState.Ready -> state.playback.errorMessage
     }
+    val isLoading = uiState == PlayerUiState.Loading || readyState?.playback?.isBuffering == true
+    val onRetry = when {
+        uiState is PlayerUiState.Error -> viewModel::retry
+        readyState?.playback?.errorMessage != null && track != null && playbackController != null -> {
+            {
+                viewModel.onPlaybackRetry()
+                playbackController.retry(track, noPreviewMessage, viewModel::onPlaybackError)
+            }
+        }
+        else -> null
+    }
+    var showTrackOptions by remember { mutableStateOf(false) }
 
     DisposableEffect(track?.trackId) {
         val playedTrackId = track?.trackId
@@ -77,7 +76,13 @@ internal fun PlayerScreen(
 
     MediaPlayer(
         track = track,
-        state = playback,
+        playback = playback,
+        controller = playbackController,
+        onBufferingChanged = viewModel::onPlaybackBufferingChanged,
+        onDurationChanged = viewModel::onPlaybackDurationChanged,
+        onPositionChanged = viewModel::onPlaybackPositionChanged,
+        onError = viewModel::onPlaybackError,
+        onConsumeSeek = viewModel::consumeSeek,
     )
 
     Scaffold(
@@ -85,7 +90,7 @@ internal fun PlayerScreen(
         containerColor = MaterialTheme.colorScheme.background,
         topBar = {
             PlayerHeader(
-                title = (trackState as? TrackLoadState.Ready)?.track?.collectionName.orEmpty(),
+                title = track?.collectionName.orEmpty(),
                 onBack = onBack,
                 onMore = { if (track != null) showTrackOptions = true },
             )
@@ -96,20 +101,24 @@ internal fun PlayerScreen(
                 .fillMaxSize()
                 .padding(inner),
         ) {
-            when (val state = trackState) {
-                TrackLoadState.Loading -> Loading(Modifier.fillMaxSize())
-                is TrackLoadState.Error -> ErrorState(state.message, Modifier.fillMaxSize())
-                is TrackLoadState.Ready -> PlayerBody(
-                    track = state.track,
-                    isPlaying = playback.isPlaying,
-                    isRepeating = playback.repeatEnabled,
-                    positionMs = playback.positionMs,
-                    durationMs = playback.durationMs,
-                    onTogglePlayPause = playback::togglePlayPause,
-                    onToggleRepeat = playback::toggleRepeat,
-                    onSkipBackward = { playback.seekBy(-SKIP_INTERVAL_MS) },
-                    onSkipForward = { playback.seekBy(SKIP_INTERVAL_MS) },
-                    onSeek = playback::seekTo,
+            when {
+                isLoading -> Loading(Modifier.fillMaxSize())
+                errorMessage != null -> ErrorState(
+                    message = errorMessage,
+                    modifier = Modifier.fillMaxSize(),
+                    onRetry = onRetry,
+                )
+                readyState != null -> PlayerBody(
+                    track = readyState.track,
+                    isPlaying = readyState.playback.isPlaying,
+                    isRepeating = readyState.playback.repeatEnabled,
+                    positionMs = readyState.playback.positionMs,
+                    durationMs = readyState.playback.durationMs,
+                    onTogglePlayPause = viewModel::togglePlayPause,
+                    onToggleRepeat = viewModel::toggleRepeat,
+                    onSkipBackward = { viewModel.seekBy(-SKIP_INTERVAL_MS) },
+                    onSkipForward = { viewModel.seekBy(SKIP_INTERVAL_MS) },
+                    onSeek = viewModel::seekTo,
                     modifier = Modifier.fillMaxSize(),
                 )
             }

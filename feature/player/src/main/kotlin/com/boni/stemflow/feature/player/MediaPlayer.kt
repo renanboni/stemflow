@@ -1,13 +1,12 @@
 package com.boni.stemflow.feature.player
 
 import android.content.ComponentName
-import android.content.Context
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.retain.retain
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
@@ -25,25 +24,30 @@ import com.boni.stemflow.feature.player.service.PlaybackService
 import kotlinx.coroutines.delay
 
 @Composable
-fun MediaPlayer(
+internal fun MediaPlayer(
     track: Track?,
-    state: PlayerPlaybackState,
+    playback: PlaybackUiState?,
+    controller: PlayerPlaybackController?,
+    onBufferingChanged: (Boolean) -> Unit,
+    onDurationChanged: (Long) -> Unit,
+    onPositionChanged: (Long) -> Unit,
+    onError: (String?) -> Unit,
+    onConsumeSeek: () -> Unit,
 ) {
-    val context = LocalContext.current.applicationContext
     val playbackErrorMessage = stringResource(R.string.player_error_playback)
     val noPreviewMessage = stringResource(R.string.player_error_no_preview)
 
-    val controller = rememberMediaController(context) ?: return
+    if (controller == null) return
 
     DisposableEffect(controller) {
         val listener = object : Player.Listener {
             override fun onPlaybackStateChanged(playbackState: Int) {
-                state.onBufferingChanged(playbackState == Player.STATE_BUFFERING)
-                state.onDurationChanged(controller.duration.coerceAtLeast(0L))
+                onBufferingChanged(playbackState == Player.STATE_BUFFERING)
+                onDurationChanged(controller.durationMs.coerceAtLeast(0L))
             }
 
             override fun onPlayerError(error: PlaybackException) {
-                state.onError(error.message ?: playbackErrorMessage)
+                onError(error.message ?: playbackErrorMessage)
             }
         }
         controller.addListener(listener)
@@ -51,46 +55,35 @@ fun MediaPlayer(
     }
 
     LaunchedEffect(controller, track?.trackId) {
-        val url = track?.previewUrl
-        if (url.isNullOrBlank()) {
-            controller.stop()
-            controller.clearMediaItems()
-            if (track != null) state.onError(noPreviewMessage)
-            return@LaunchedEffect
-        }
-        controller.setMediaItem(track.toMediaItem(url))
-        controller.prepare()
+        controller.prepare(track, noPreviewMessage, onError)
     }
 
-    LaunchedEffect(controller, state.isPlaying) {
-        controller.playWhenReady = state.isPlaying
+    LaunchedEffect(controller, playback?.isPlaying) {
+        controller.play(playback?.isPlaying == true)
     }
 
-    LaunchedEffect(controller, state.repeatEnabled) {
-        controller.repeatMode = if (state.repeatEnabled) {
-            Player.REPEAT_MODE_ONE
-        } else {
-            Player.REPEAT_MODE_OFF
-        }
+    LaunchedEffect(controller, playback?.repeatEnabled) {
+        controller.repeat(playback?.repeatEnabled == true)
     }
 
-    LaunchedEffect(controller, state.seekTarget) {
-        val target = state.seekTarget ?: return@LaunchedEffect
+    LaunchedEffect(controller, playback?.seekTarget) {
+        val target = playback?.seekTarget ?: return@LaunchedEffect
         controller.seekTo(target)
-        state.consumeSeek()
+        onConsumeSeek()
     }
 
     LaunchedEffect(controller) {
         while (true) {
-            state.onPositionChanged(controller.currentPosition)
+            onPositionChanged(controller.positionMs)
             delay(POSITION_TICK_MS)
         }
     }
 }
 
 @Composable
-private fun rememberMediaController(context: Context): MediaController? {
-    var controller by retain { mutableStateOf<MediaController?>(null) }
+internal fun rememberPlayerPlaybackController(): PlayerPlaybackController? {
+    val context = LocalContext.current.applicationContext
+    var controller by retain { mutableStateOf<PlayerPlaybackController?>(null) }
 
     DisposableEffect(Unit) {
         val token = SessionToken(
@@ -101,7 +94,9 @@ private fun rememberMediaController(context: Context): MediaController? {
         future.addListener(
             {
                 if (!future.isCancelled) {
-                    controller = runCatching { future.get() }.getOrNull()
+                    controller = runCatching {
+                        PlayerPlaybackController(future.get())
+                    }.getOrNull()
                 }
             },
             ContextCompat.getMainExecutor(context),
@@ -114,6 +109,69 @@ private fun rememberMediaController(context: Context): MediaController? {
     }
 
     return controller
+}
+
+@Stable
+internal class PlayerPlaybackController internal constructor(
+    private val controller: MediaController,
+) {
+    val durationMs: Long get() = controller.duration
+
+    val positionMs: Long get() = controller.currentPosition
+
+    fun prepare(
+        track: Track?,
+        noPreviewMessage: String,
+        onError: (String?) -> Unit,
+    ) {
+        val url = track?.previewUrl
+        if (url.isNullOrBlank()) {
+            controller.stop()
+            controller.clearMediaItems()
+            if (track != null) onError(noPreviewMessage)
+            return
+        }
+
+        controller.setMediaItem(track.toMediaItem(url))
+        controller.prepare()
+    }
+
+    fun retry(
+        track: Track,
+        noPreviewMessage: String,
+        onError: (String?) -> Unit,
+    ) {
+        prepare(track, noPreviewMessage, onError)
+        controller.playWhenReady = true
+    }
+
+    fun play(isPlaying: Boolean) {
+        controller.playWhenReady = isPlaying
+    }
+
+    fun repeat(isRepeating: Boolean) {
+        controller.repeatMode = if (isRepeating) {
+            Player.REPEAT_MODE_ONE
+        } else {
+            Player.REPEAT_MODE_OFF
+        }
+    }
+
+    fun seekTo(positionMs: Long) {
+        controller.seekTo(positionMs)
+    }
+
+    fun addListener(listener: Player.Listener) {
+        controller.addListener(listener)
+    }
+
+    fun removeListener(listener: Player.Listener) {
+        controller.removeListener(listener)
+    }
+
+    fun release() {
+        controller.release()
+    }
 }
 
 private fun Track.toMediaItem(url: String): MediaItem {
