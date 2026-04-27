@@ -55,6 +55,12 @@ fun MainNavigation(
     }
 
     val backStack = rememberNavBackStack(LibraryRoute)
+
+    fun openPlayer(trackId: Long) {
+        backStack.removeAll { it is PlayerRoute }
+        backStack.add(PlayerRoute(trackId))
+    }
+
     Scaffold(
         snackbarHost = {
             SnackbarHost(
@@ -81,7 +87,7 @@ fun MainNavigation(
                         entryProvider = entryProvider {
                             entry<LibraryRoute> {
                                 LibraryScreen(
-                                    onTrackClick = { trackId -> backStack.add(PlayerRoute(trackId)) },
+                                    onTrackClick = ::openPlayer,
                                     onOpenAlbum = { albumId -> backStack.add(AlbumRoute(albumId)) },
                                 )
                             }
@@ -94,6 +100,7 @@ fun MainNavigation(
                                 PlayerScreen(
                                     viewModel = playerViewModel,
                                     onBack = { backStack.removeLastOrNull() },
+                                    onOpenAlbum = { albumId -> backStack.add(AlbumRoute(albumId)) },
                                 )
                             }
                             entry<AlbumRoute> { route ->
@@ -105,7 +112,7 @@ fun MainNavigation(
                                 AlbumScreen(
                                     viewModel = albumViewModel,
                                     onBack = { backStack.removeLastOrNull() },
-                                    onTrackClick = { trackId -> backStack.add(PlayerRoute(trackId)) },
+                                    onTrackClick = ::openPlayer,
                                 )
                             }
                         },

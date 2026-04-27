@@ -46,7 +46,6 @@ fun TrackOptionsSheet(
         onDismissRequest = onDismiss,
         sheetState = sheetState,
         shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
-        containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.8f),
         tonalElevation = 0.dp,
         dragHandle = null,
         contentWindowInsets = { WindowInsets(0.dp) },

@@ -11,3 +11,6 @@ import androidx.compose.ui.graphics.Color
 
 val ColorScheme.textTertiary: Color
     get() = StemflowTextTertiary
+
+val ColorScheme.elementTertiary: Color
+    get() = StemflowElementTertiary

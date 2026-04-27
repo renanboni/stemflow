@@ -14,7 +14,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.semantics
@@ -23,6 +22,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.boni.stemflow.core.designsystem.component.Thumbnail
 import com.boni.stemflow.core.designsystem.modifier.bounceClickable
+import com.boni.stemflow.core.designsystem.theme.elementTertiary
 import com.boni.stemflow.core.designsystem.theme.StemflowTheme
 import com.boni.stemflow.core.designsystem.theme.textTertiary
 import com.boni.stemflow.core.designsystem.R as DesignSystemR
@@ -34,8 +34,8 @@ fun SongRow(
     artist: String,
     artworkUrl: String?,
     onClick: () -> Unit,
-    onMoreClick: () -> Unit,
     modifier: Modifier = Modifier,
+    onMoreClick: (() -> Unit)? = null,
     sharedKey: Any? = null,
 ) {
     Row(
@@ -67,19 +67,21 @@ fun SongRow(
                 overflow = TextOverflow.Ellipsis,
             )
         }
-        Spacer(Modifier.width(8.dp))
-        Box(
-            modifier = Modifier
-                .size(36.dp)
-                .bounceClickable(onClick = onMoreClick),
-            contentAlignment = Alignment.Center,
-        ) {
-            Icon(
-                painter = painterResource(DesignSystemR.drawable.ic_more_menu),
-                contentDescription = stringResource(R.string.core_ui_more_options_for, title),
-                modifier = Modifier.size(20.dp),
-                tint = Color(0xFF545454),
-            )
+        if (onMoreClick != null) {
+            Spacer(Modifier.width(8.dp))
+            Box(
+                modifier = Modifier
+                    .size(36.dp)
+                    .bounceClickable(onClick = onMoreClick),
+                contentAlignment = Alignment.Center,
+            ) {
+                Icon(
+                    painter = painterResource(DesignSystemR.drawable.ic_more_menu),
+                    contentDescription = stringResource(R.string.core_ui_more_options_for, title),
+                    modifier = Modifier.size(20.dp),
+                    tint = MaterialTheme.colorScheme.elementTertiary,
+                )
+            }
         }
     }
 }
@@ -93,7 +95,6 @@ private fun SongRowPreview() {
             artist = "Artist Name",
             artworkUrl = null,
             onClick = {},
-            onMoreClick = {},
         )
     }
 }

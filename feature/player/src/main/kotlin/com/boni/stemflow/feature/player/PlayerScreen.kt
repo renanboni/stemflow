@@ -15,6 +15,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -25,6 +28,7 @@ import com.boni.stemflow.core.designsystem.component.ErrorState
 import com.boni.stemflow.core.designsystem.component.Loading
 import com.boni.stemflow.core.designsystem.theme.StemflowTheme
 import com.boni.stemflow.core.domain.model.Track
+import com.boni.stemflow.core.ui.component.TrackOptionsSheet
 import com.boni.stemflow.feature.player.components.PlaybackTime
 import com.boni.stemflow.feature.player.components.PlayerControls
 import com.boni.stemflow.feature.player.components.PlayerHeader
@@ -36,12 +40,14 @@ private const val SKIP_INTERVAL_MS = 10_000L
 fun PlayerScreen(
     viewModel: PlayerViewModel,
     onBack: () -> Unit,
+    onOpenAlbum: (Long) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     PlayerScreen(
         viewModel = viewModel,
         playback = rememberPlayerPlaybackState(),
         onBack = onBack,
+        onOpenAlbum = onOpenAlbum,
         modifier = modifier,
     )
 }
@@ -51,10 +57,12 @@ internal fun PlayerScreen(
     viewModel: PlayerViewModel,
     playback: PlayerPlaybackState,
     onBack: () -> Unit,
+    onOpenAlbum: (Long) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val trackState by viewModel.state.collectAsStateWithLifecycle()
     val track = (trackState as? TrackLoadState.Ready)?.track
+    var showTrackOptions by remember { mutableStateOf(false) }
 
     LaunchedEffect(track?.trackId) {
         playback.onTrackLoaded(track)
@@ -79,7 +87,7 @@ internal fun PlayerScreen(
             PlayerHeader(
                 title = (trackState as? TrackLoadState.Ready)?.track?.collectionName.orEmpty(),
                 onBack = onBack,
-                onMore = {},
+                onMore = { if (track != null) showTrackOptions = true },
             )
         },
     ) { inner ->
@@ -106,6 +114,18 @@ internal fun PlayerScreen(
                 )
             }
         }
+    }
+
+    if (showTrackOptions && track != null) {
+        TrackOptionsSheet(
+            title = track.name,
+            artist = track.artistName,
+            onOpenAlbum = {
+                showTrackOptions = false
+                onOpenAlbum(track.collectionId)
+            },
+            onDismiss = { showTrackOptions = false },
+        )
     }
 }
 
