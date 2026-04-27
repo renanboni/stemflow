@@ -19,19 +19,56 @@ a small recently played list, and lets users open the album for a track.
 
 ## Project Layout
 
+```mermaid
+flowchart TB
+    app[app<br/>MainActivity + Navigation]
+
+    subgraph features[feature]
+        library[library<br/>Search + recently played]
+        player[player<br/>Preview playback]
+        album[album<br/>Album details]
+    end
+
+    subgraph core[core]
+        ui[ui<br/>Shared app components]
+        design[designsystem<br/>Theme, icons, primitives]
+        data[data<br/>Repositories + local/remote sync]
+        domain[domain<br/>Models + contracts]
+        database[database<br/>Room]
+        network[network<br/>iTunes API]
+        common[common<br/>Dispatchers, clock, connectivity]
+        testing[testing<br/>Fixtures, fakes, rules]
+    end
+
+    app --> library
+    app --> player
+    app --> album
+    library --> ui
+    player --> ui
+    album --> ui
+    ui --> design
+    library --> domain
+    player --> domain
+    album --> domain
+    data --> domain
+    data --> database
+    data --> network
+    data --> common
+    network --> domain
+    database --> domain
+```
+
 ```text
-app/                 App entry point and navigation
-core/common/         Shared utilities, dispatchers, connectivity, clock
-core/data/           Repository implementations and local/remote coordination
-core/database/       Room database, DAOs, entities
-core/designsystem/   Theme, shared UI primitives, icons
-core/domain/         Domain models and repository contracts
-core/network/        iTunes API service, DTOs, remote data source
-core/testing/        Test fixtures, rules, fakes
-core/ui/             Reusable app-level UI components
-feature/album/       Album screen and state
-feature/library/     Search and recently played screen
-feature/player/      Preview player screen and playback state
+app/                 App shell, root navigation, app-level state
+feature/*            Screen-level UI and ViewModels
+core/domain/         Domain models and repository interfaces
+core/data/           Repository implementations
+core/network/        Retrofit service and iTunes DTO mapping
+core/database/       Room entities, DAOs, and database setup
+core/designsystem/   Theme, icons, and shared visual primitives
+core/ui/             Reusable components used by multiple features
+core/common/         Dispatchers, connectivity, clock, shared utilities
+core/testing/        Test fixtures, fake data sources, coroutine rules
 ```
 
 ## Running
