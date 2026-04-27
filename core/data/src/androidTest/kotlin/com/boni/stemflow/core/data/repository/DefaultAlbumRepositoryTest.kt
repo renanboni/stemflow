@@ -4,8 +4,9 @@ import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import app.cash.turbine.test
+import com.boni.stemflow.core.data.local.LocalITunesLocalDataSource
 import com.boni.stemflow.core.database.StemflowDatabase
-import com.boni.stemflow.core.testing.fakes.FakeNetworkDataSource
+import com.boni.stemflow.core.testing.fakes.FakeITunesRemoteDataSource
 import com.boni.stemflow.core.testing.fixtures.TrackFixtures
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
@@ -21,7 +22,8 @@ import java.io.IOException
 class DefaultAlbumRepositoryTest {
 
     private lateinit var db: StemflowDatabase
-    private lateinit var fakeNetwork: FakeNetworkDataSource
+    private lateinit var fakeNetwork: FakeITunesRemoteDataSource
+    private lateinit var local: LocalITunesLocalDataSource
     private lateinit var repo: DefaultAlbumRepository
 
     @Before
@@ -30,12 +32,16 @@ class DefaultAlbumRepositoryTest {
             ApplicationProvider.getApplicationContext(),
             StemflowDatabase::class.java,
         ).allowMainThreadQueries().build()
-        fakeNetwork = FakeNetworkDataSource()
-        repo = DefaultAlbumRepository(
-            network = fakeNetwork,
+        fakeNetwork = FakeITunesRemoteDataSource()
+        local = LocalITunesLocalDataSource(
             albumDao = db.albumDao(),
             trackDao = db.trackDao(),
+            recentlyPlayedDao = db.recentlyPlayedDao(),
             db = db,
+        )
+        repo = DefaultAlbumRepository(
+            network = fakeNetwork,
+            local = local,
         )
     }
 
@@ -50,9 +56,6 @@ class DefaultAlbumRepositoryTest {
         fakeNetwork.lookupAlbums = mapOf(42L to album)
 
         repo.getAlbum(42L).test {
-            // Drain emissions until the album is fully loaded with its tracks.
-            // Room emits per-table, so intermediate states may include
-            // (null album + tracks) or (album + empty tracks).
             var loaded = awaitItem()
             while (loaded == null || loaded.tracks.size != 3) {
                 loaded = awaitItem()

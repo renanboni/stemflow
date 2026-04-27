@@ -1,5 +1,7 @@
 package com.boni.stemflow.core.data.di
 
+import com.boni.stemflow.core.data.local.ITunesLocalDataSource
+import com.boni.stemflow.core.data.local.LocalITunesLocalDataSource
 import com.boni.stemflow.core.data.repository.DefaultAlbumRepository
 import com.boni.stemflow.core.data.repository.DefaultSearchRepository
 import com.boni.stemflow.core.data.repository.DefaultTrackRepository
@@ -15,6 +17,10 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 abstract class DataModule {
+
+    @Binds
+    @Singleton
+    abstract fun bindITunesLocalDataSource(impl: LocalITunesLocalDataSource): ITunesLocalDataSource
 
     @Binds
     @Singleton

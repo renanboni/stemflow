@@ -2,11 +2,11 @@ package com.boni.stemflow.core.data.repository
 
 import app.cash.turbine.test
 import com.boni.stemflow.core.common.time.Clock
-import com.boni.stemflow.core.database.dao.RecentlyPlayedDao
-import com.boni.stemflow.core.database.dao.TrackDao
-import com.boni.stemflow.core.database.entity.RecentlyPlayedEntity
-import com.boni.stemflow.core.database.entity.TrackEntity
-import com.boni.stemflow.core.testing.fakes.FakeNetworkDataSource
+import com.boni.stemflow.core.data.local.ITunesLocalDataSource
+import com.boni.stemflow.core.domain.model.Album
+import com.boni.stemflow.core.domain.model.Track
+import com.boni.stemflow.core.testing.fakes.FakeITunesRemoteDataSource
+import com.boni.stemflow.core.testing.fixtures.TrackFixtures
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.map
@@ -18,25 +18,24 @@ import org.junit.Test
 
 class DefaultTrackRepositoryTest {
 
-    private lateinit var trackDao: FakeTrackDao
-    private lateinit var recentDao: FakeRecentlyPlayedDao
-    private lateinit var network: FakeNetworkDataSource
+    private lateinit var local: TestITunesLocalDataSource
+    private lateinit var network: FakeITunesRemoteDataSource
     private var nowMs: Long = 42L
     private lateinit var repo: DefaultTrackRepository
 
     @Before
     fun setUp() {
-        trackDao = FakeTrackDao()
-        recentDao = FakeRecentlyPlayedDao(trackDao)
-        network = FakeNetworkDataSource()
-        repo = DefaultTrackRepository(trackDao, recentDao, network, Clock { nowMs })
+        local = TestITunesLocalDataSource()
+        network = FakeITunesRemoteDataSource()
+        repo = DefaultTrackRepository(local, network, Clock { nowMs })
     }
 
     @Test
     fun `getRecentlyPlayed emits domain Tracks ordered by recency`() = runTest {
-        trackDao.upsertAll(listOf(trackEntity(1L), trackEntity(2L)))
-        recentDao.markPlayed(1L, nowMs = 100L)
-        recentDao.markPlayed(2L, nowMs = 200L)
+        local.upsertTrack(TrackFixtures.track(id = 1L))
+        local.upsertTrack(TrackFixtures.track(id = 2L))
+        local.markTrackPlayed(1L, nowMs = 100L)
+        local.markTrackPlayed(2L, nowMs = 200L)
 
         repo.getRecentlyPlayed().test {
             val list = awaitItem()
@@ -48,79 +47,67 @@ class DefaultTrackRepositoryTest {
     @Test
     fun `markPlayed uses the supplied clock`() = runTest {
         nowMs = 999L
-        trackDao.upsertAll(listOf(trackEntity(1L)))
+        local.upsertTrack(TrackFixtures.track(id = 1L))
         repo.markPlayed(1L)
 
-        assertEquals(999L, recentDao.rows.single().playedAt)
+        assertEquals(999L, local.recentlyPlayed.single().playedAt)
+    }
+
+    @Test
+    fun `getTrack returns cached local track without network request`() = runTest {
+        val track = TrackFixtures.track(id = 7L)
+        local.upsertTrack(track)
+        network.throwOnNext = AssertionError("Network should not be called")
+
+        assertEquals(track, repo.getTrack(7L))
+    }
+
+    @Test
+    fun `getTrack stores fetched network track locally`() = runTest {
+        val track = TrackFixtures.track(id = 8L)
+        network.tracksById = mapOf(8L to track)
+
+        assertEquals(track, repo.getTrack(8L))
+        assertEquals(track, local.tracks[8L])
     }
 
     @Test
     fun `getTrack returns null when network misses`() = runTest {
         assertNull(repo.getTrack(999L))
     }
+}
 
-    private fun trackEntity(id: Long) = TrackEntity(
-        trackId = id,
-        name = "n$id",
-        artistName = "a",
-        artistId = 1L,
-        collectionId = 100L,
-        collectionName = "c",
-        artworkUrl100 = null,
-        artworkUrl600 = null,
-        previewUrl = null,
-        trackTimeMillis = null,
-        primaryGenreName = null,
-        releaseDate = null,
-        trackViewUrl = null,
+private class TestITunesLocalDataSource : ITunesLocalDataSource {
+    val tracks = mutableMapOf<Long, Track>()
+    val recentlyPlayed = mutableListOf<RecentlyPlayed>()
+    private val changes = MutableStateFlow(0)
+
+    override fun observeAlbum(collectionId: Long): Flow<Album?> =
+        changes.map { null }
+
+    override suspend fun upsertAlbum(album: Album) = Unit
+
+    override fun observeRecentlyPlayed(): Flow<List<Track>> = changes.map {
+        recentlyPlayed
+            .sortedByDescending { it.playedAt }
+            .mapNotNull { tracks[it.trackId] }
+    }
+
+    override suspend fun getTrack(trackId: Long): Track? = tracks[trackId]
+
+    override suspend fun upsertTrack(track: Track) {
+        tracks[track.trackId] = track
+        changes.value += 1
+    }
+
+    override suspend fun markTrackPlayed(trackId: Long, nowMs: Long) {
+        recentlyPlayed.removeAll { it.trackId == trackId }
+        recentlyPlayed += RecentlyPlayed(trackId = trackId, playedAt = nowMs)
+        changes.value += 1
+    }
+
+    data class RecentlyPlayed(
+        val trackId: Long,
+        val playedAt: Long,
     )
-}
-
-private class FakeTrackDao : TrackDao {
-    val stored = mutableMapOf<Long, TrackEntity>()
-    private val changes = MutableStateFlow(0)
-
-    override suspend fun upsertAll(tracks: List<TrackEntity>) {
-        tracks.forEach { stored[it.trackId] = it }
-        changes.value += 1
-    }
-
-    override fun observeById(trackId: Long): Flow<TrackEntity?> =
-        changes.map { stored[trackId] }
-
-    override suspend fun getById(trackId: Long): TrackEntity? = stored[trackId]
-
-    override suspend fun getAllByIds(ids: List<Long>): List<TrackEntity> =
-        ids.mapNotNull { stored[it] }
-
-    override fun observeTracksForCollection(id: Long): Flow<List<TrackEntity>> =
-        changes.map { stored.values.filter { it.collectionId == id }.sortedBy { it.trackId } }
-
-    fun orderedByIds(ids: List<Long>): List<TrackEntity> =
-        ids.mapNotNull { stored[it] }
-}
-
-private class FakeRecentlyPlayedDao(
-    private val trackDao: FakeTrackDao,
-) : RecentlyPlayedDao {
-    val rows = mutableListOf<RecentlyPlayedEntity>()
-    private val changes = MutableStateFlow(0)
-
-    override suspend fun insertOrReplace(entry: RecentlyPlayedEntity) {
-        rows.removeAll { it.trackId == entry.trackId }
-        rows.add(entry)
-        changes.value += 1
-    }
-
-    override suspend fun trimToNewest(keep: Int) {
-        val sorted = rows.sortedByDescending { it.playedAt }.take(keep)
-        rows.clear()
-        rows.addAll(sorted)
-        changes.value += 1
-    }
-
-    override fun observeRecent(): Flow<List<TrackEntity>> = changes.map {
-        val ordered = rows.sortedByDescending { it.playedAt }.map { it.trackId }
-        trackDao.orderedByIds(ordered)
-    }
 }

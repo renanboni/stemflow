@@ -3,7 +3,7 @@ package com.boni.stemflow.core.data.paging
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.boni.stemflow.core.domain.model.Track
-import com.boni.stemflow.core.network.NetworkDataSource
+import com.boni.stemflow.core.network.ITunesRemoteDataSource
 import retrofit2.HttpException
 import java.io.IOException
 
@@ -15,7 +15,7 @@ import java.io.IOException
  */
 class ITunesSearchPagingSource(
     private val query: String,
-    private val network: NetworkDataSource,
+    private val network: ITunesRemoteDataSource,
     private val pageSize: Int = DEFAULT_PAGE_SIZE,
 ) : PagingSource<Int, Track>() {
 

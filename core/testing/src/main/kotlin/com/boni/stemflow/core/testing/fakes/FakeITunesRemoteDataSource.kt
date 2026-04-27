@@ -2,10 +2,10 @@ package com.boni.stemflow.core.testing.fakes
 
 import com.boni.stemflow.core.domain.model.Album
 import com.boni.stemflow.core.domain.model.Track
-import com.boni.stemflow.core.network.NetworkDataSource
-import java.io.IOException
+import com.boni.stemflow.core.network.ITunesRemoteDataSource
+import com.boni.stemflow.core.network.RemoteDataException
 
-class FakeNetworkDataSource : NetworkDataSource {
+class FakeITunesRemoteDataSource : ITunesRemoteDataSource {
     var searchPages: Map<Pair<String, Int>, List<Track>> = emptyMap()
     var lookupAlbums: Map<Long, Album> = emptyMap()
     var tracksById: Map<Long, Track> = emptyMap()
@@ -20,7 +20,7 @@ class FakeNetworkDataSource : NetworkDataSource {
     override suspend fun getAlbum(collectionId: Long): Album {
         throwOnNext?.let { throwOnNext = null; throw it }
         return lookupAlbums[collectionId]
-            ?: throw IOException("no fake album fixture for $collectionId")
+            ?: throw RemoteDataException.NotFound("No fake album fixture for $collectionId")
     }
 
     override suspend fun getTrack(trackId: Long): Track? {

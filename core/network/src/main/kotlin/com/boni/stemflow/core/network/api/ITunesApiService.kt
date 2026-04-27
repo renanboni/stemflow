@@ -17,7 +17,7 @@ interface ITunesApiService {
     ): ITunesResponseDto
 
     @GET("lookup")
-    suspend fun lookup(
+    suspend fun get(
         @Query("id") id: Long,
         @Query("entity") entity: String = "song",
     ): ITunesResponseDto

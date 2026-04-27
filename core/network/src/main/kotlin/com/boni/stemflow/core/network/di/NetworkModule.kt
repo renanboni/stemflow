@@ -1,7 +1,7 @@
 package com.boni.stemflow.core.network.di
 
-import com.boni.stemflow.core.network.ITunesNetworkDataSource
-import com.boni.stemflow.core.network.NetworkDataSource
+import com.boni.stemflow.core.network.DefaultITunesRemoteDataSource
+import com.boni.stemflow.core.network.ITunesRemoteDataSource
 import com.boni.stemflow.core.network.api.ITunesApiService
 import dagger.Binds
 import dagger.Module
@@ -63,5 +63,5 @@ abstract class NetworkBindingsModule {
 
     @Binds
     @Singleton
-    abstract fun bindNetworkDataSource(impl: ITunesNetworkDataSource): NetworkDataSource
+    abstract fun bindNetworkDataSource(impl: DefaultITunesRemoteDataSource): ITunesRemoteDataSource
 }
