@@ -1,6 +1,9 @@
 package com.boni.stemflow
 
 import com.android.build.api.dsl.CommonExtension
+import com.android.build.api.variant.AndroidComponentsExtension
+import com.android.build.api.variant.ApplicationVariantBuilder
+import com.android.build.api.variant.LibraryVariantBuilder
 import org.gradle.api.JavaVersion
 import org.gradle.api.Project
 import org.gradle.api.plugins.JavaPluginExtension
@@ -25,6 +28,24 @@ internal fun Project.configureKotlinJvm() {
         targetCompatibility = JavaVersion.VERSION_17
     }
     configureKotlin<KotlinJvmProjectExtension>()
+}
+
+internal fun Project.hasAndroidTestSources(): Boolean =
+    fileTree("src/androidTest") {
+        include("**/*.java", "**/*.kt")
+    }.files.isNotEmpty()
+
+internal fun Project.disableAndroidTestWhenNoSources(hasAndroidTestSources: Boolean) {
+    if (hasAndroidTestSources) return
+
+    extensions.configure(AndroidComponentsExtension::class.java) {
+        beforeVariants(selector().all()) { variantBuilder ->
+            when (variantBuilder) {
+                is ApplicationVariantBuilder -> variantBuilder.enableAndroidTest = false
+                is LibraryVariantBuilder -> variantBuilder.enableAndroidTest = false
+            }
+        }
+    }
 }
 
 private inline fun <reified T : Any> Project.configureKotlin() = extensions.configure<T> {

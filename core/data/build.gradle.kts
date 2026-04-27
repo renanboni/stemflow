@@ -5,9 +5,6 @@ plugins {
 
 android {
     namespace = "com.boni.stemflow.core.data"
-    defaultConfig {
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-    }
 }
 
 dependencies {
@@ -25,7 +22,6 @@ dependencies {
     testImplementation(libs.paging.testing)
     testImplementation(projects.core.testing)
     androidTestImplementation(libs.androidx.test.ext.junit)
-    androidTestImplementation(libs.androidx.test.runner)
     androidTestImplementation(libs.kotlinx.coroutines.test)
     androidTestImplementation(libs.paging.testing)
     androidTestImplementation(libs.turbine)
