@@ -4,9 +4,11 @@ Stemflow is an Android app test built for Moises.ai with Kotlin and Jetpack
 Compose. It searches the iTunes API, shows track results, plays previews, keeps
 a small recently played list, and lets users open the album for a track.
 
-<img width="1280" height="2856" alt="image" src="https://github.com/user-attachments/assets/f0d5bb0a-1670-4835-8343-eab3d88ac6fb" />
-<img width="1280" height="2856" alt="image" src="https://github.com/user-attachments/assets/5fd7d210-9fb6-482b-859b-f937e6f4bb03" />
-<img width="1280" height="2856" alt="image" src="https://github.com/user-attachments/assets/722b8f25-bddf-4fc7-84d3-1ffd2bdfbe49" />
+<p>
+  <img width="240" alt="Library screen" src="https://github.com/user-attachments/assets/f0d5bb0a-1670-4835-8343-eab3d88ac6fb" />
+  <img width="240" alt="Player screen" src="https://github.com/user-attachments/assets/5fd7d210-9fb6-482b-859b-f937e6f4bb03" />
+  <img width="240" alt="Album screen" src="https://github.com/user-attachments/assets/722b8f25-bddf-4fc7-84d3-1ffd2bdfbe49" />
+</p>
 
 ## Tech
 
